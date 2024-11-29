@@ -23,7 +23,7 @@ Before we begin the following are assumed:
 
 * A PC with an AMD iGPU or AMD dedicated GPU
 * Arch Linux installed
-* SDDM and KDE Plasma installed
+* A display manager and desktop environment installed (e.g., SDDM and KDE Plasma, GDM and Gnome)
 * Steam installed
 * MangoHud installed
 * A code editor installed
@@ -42,10 +42,11 @@ But in practice the out-of-the-box experiece isn't as smooth and pleasant experi
 
 That said, Gamescope is available in other distributions like Debian or Fedora. Find out more on Gamescope's [README.md](https://github.com/ValveSoftware/gamescope) file on GitHub for details for the status of Gamescope packages.
 
-#### SDDM and KDE Plasma installed?
+#### A display manager and desktop environment installed?
 
 * This will make it easier to understand the concept and setting up the configurations and scripts
-* Plus, the Steam Deck comes with KDE Plasma - it will be nice in keeping things consistent
+* Also, the Steam Deck comes with KDE Plasma - it will be nice in keeping things consistent
+* But it can also work with other display managers and desktop environments like GDM and Gnome
 
 #### Steam installed?
 
@@ -142,7 +143,7 @@ That said, Gamescope is available in other distributions like Debian or Fedora. 
 * Steam will open in a window running in in Gamescope and SteamOS mode.
 * Close the window.
 
-#### 7. Setting up a new session in SDDM
+#### 7. Setting up a new session in the display manager
 
 * (If it does not exist already) create a `Developer` folder in your `HOME` location using a file manager or from the command line as follows
 
@@ -166,10 +167,13 @@ That said, Gamescope is available in other distributions like Debian or Fedora. 
 
   > `sudo cp ~/Developer/steam.desktop /usr/share/wayland-sessions/`
 
-* Log off from KDE Plasma. On the login screen (SDDM) select `Steam (gamescope)` from the session selection (located near the bottom left corner of the screen). Use the same login and password as you would log on to the linux desktop.
+* Log off from the desktop environment (e.g., KDE Plasma, Gnome).
+* Follow the next steps based on the display manager used:
+  * For SDDM, on the login screen select `Steam (gamescope)` from the session selection (located near the bottom left corner of the screen). Use the same login and password as you would log on to the linux desktop.
+  * For GDM, on the login screen select your username and then select `Steam (gamescope)` from the session selection (located near the bottom right corner of the screen). Use the same password as you would log on to the linux desktop.
 * This will launch Steam full screen in Gamescope and SteamOS mode.
 
-#### 8. Add a script to switch back to 'desktop mode' (SDDM)
+#### 8. Add a script to switch back to 'desktop mode' (back to login screen)
 
 To enable the `Switch to Desktop` invoke Steam to shut down the `steamos-session-select` will be created and placed under the `/usr/bin` folder.
 
