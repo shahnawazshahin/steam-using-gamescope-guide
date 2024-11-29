@@ -69,8 +69,8 @@ That said, Gamescope is available in other distributions like Debian or Fedora. 
 * Run through Steam Deck set up
 * Testing Steam launching with Gamescope in SteamOS mode and Mangoapp
 * Add a script to launch Steam in Gamescope and SteamOS mode
-* Setting up a new session in SDDM
-* Add a script to switch back to 'desktop mode' (SDDM)
+* Setting up a new session in the display manager (e.g., SDDM, GDM)
+* Add a script to switch back to 'desktop mode' (back to the display manager)
 
 ### Instructions
 
@@ -203,7 +203,7 @@ To enable the `Switch to Desktop` invoke Steam to shut down the `steamos-session
     > `gamescope --mangoapp -e -- steam -steamdeck -steamos3`
 
   * Launching in an embeeded session by logging off from the desktop (KDE Plasma) and log in again using `Steam (gamescope)` from the session selection
-* Using the `Esc` key on the keyboard, or the guide button on your controller (e.g. Xbox button, PS button, Steam button, Stadia button, etc.), select the `Power` option, then select `Switch to Desktop` to return to the SDDM login
+* Using the `Esc` key on the keyboard, or the guide button on your controller (e.g. Xbox button, PS button, Steam button, Stadia button, etc.), select the `Power` option, then select `Switch to Desktop` to return to the display manager login
 
 ### Why these step-by-step instructions?
 
@@ -256,9 +256,9 @@ Although this isn't required for the purpose of this concept, it will be useful 
 
 That said, such tweaks can affect compatibility when running games. Keeping things as simple and vanilla as possible seems to be the most compatible way of launching games from Steam.
 
-#### Setting up a new session in SDDM
+#### Setting up a new session in the display manager
 
-Adding a session entry to SDDM will allow Steam to launch using Gamescope in SteamOS mode directly without the need of a separate window manager.
+Adding a session entry to the display manager (e.g., SDDM, GDM) will allow Steam to launch using Gamescope in SteamOS mode directly without the need of a separate window manager.
 
 Once it is running you can navigate through Steam using the keyboard or a controller. Using the `Esc` key on your keyboard or the guide button on the controller (e.g. Xbox button, PS button, Steam button, Stadia button, etc.) will open the Steam menu.
 
@@ -269,15 +269,15 @@ Once it is running you can navigate through Steam using the keyboard or a contro
 It is worth noting that if using KDE6 it is assumed that Wayland is used. With KDE5 there is a possibility that X11 is used
 by default.
 
-If `Steam (gamescope)` doesn't appear in the session entry on SDDM then copy the `steam.desktop` file into the `/usr/share/xsessions/` folder as well as the `/usr/share/wayland-sessions/`.
+If `Steam (gamescope)` doesn't appear in the session entry on the display manager then copy the `steam.desktop` file into the `/usr/share/xsessions/` folder as well as the `/usr/share/wayland-sessions/`.
 
-#### Add a script to switch back to 'desktop mode' (SDDM)
+#### Add a script to switch back to 'desktop mode' (back to the display manager)
 
 When running Steam using Gamescope in SteamOS mode, you can send the computer to `Sleep`, `Shutdown` or `Restart` from selecting `Power` from the Steam menu.
 
 However, when selecting `Switch to Desktop` it tries to invoke a script called `steamos-session-select`. Selecting the `Switch to Desktop` option will not work without the `steamos-session-select`script.
 
-In this case, the `steamos-session-select` script will be created to invoke Steam to shut down and (in turn) return to the login screen (SDDM). The `steamos-session-select` is normally expected in the `/usr/bin` folder.
+In this case, the `steamos-session-select` script will be created to invoke Steam to shut down and (in turn) return to the login screen (display manager). The `steamos-session-select` is normally expected in the `/usr/bin` folder.
 
 How this can be achieved? Thankfully, there is a simple command to tell Steam to shutdown - `steam -shutdown`. We can test this with the following:
 
