@@ -187,9 +187,9 @@ To enable the `Switch to Desktop` invoke Steam to shut down the `steamos-session
   >
   > ---
   >
-  > '#!/bin/bash'
+  > `#!/bin/bash`
   >
-  > steam -shutdown
+  > `steam -shutdown`
 
 * From the terminal, set the permissions to `steamos-session-select` and then copy the script into `/usr/bin/` folder
 
