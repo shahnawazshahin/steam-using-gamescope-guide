@@ -16,13 +16,14 @@ This is achieved by using a microcompositor called [Gamescope](https://github.co
 * The possibility of lower latency and better frame rates in games for a more responsive experience
 * To experience what a Steam Deck is like
 * To understand (and appreciate) the excellent work that Valve (and their partners) have put in
+* The freedom to use any linux distribution that supports Gamescope, and not having to resort to tailor-made distributions
 
 ## Before we begin
 
 Before we begin the following are assumed:
 
 * A PC with an AMD iGPU or AMD dedicated GPU
-* Arch Linux installed
+* Any linux distribution that provides Gamescope as a package (Arch Linux will be used as an example)
 * A display manager and desktop environment installed (e.g., SDDM and KDE Plasma, GDM and Gnome)
 * Steam installed
 * MangoHud installed
@@ -36,11 +37,21 @@ Before we begin the following are assumed:
 
 But in practice the out-of-the-box experiece isn't as smooth and pleasant experience with Intel or NVIDIA drivers when integrating Gamescope with Steam.
 
-#### Arch Linux installed?
+#### Which linux distribution shall I use, and why refer to Arch Linux as an example?
 
-[Gamescope](https://github.com/ValveSoftware/gamescope) is available on the Arch repository and is usually the latest version. Since SteamOS for the Steam Deck is based on Arch Linux it seemed the natural choice.
+Head over to Gamescope's [README.md](https://github.com/ValveSoftware/gamescope) file on GitHub for a list of linux distributions and the version of Gamescope available.
 
-That said, Gamescope is available in other distributions like Debian or Fedora. Find out more on Gamescope's [README.md](https://github.com/ValveSoftware/gamescope) file on GitHub for details for the status of Gamescope packages.
+Arch Linux seems to work quite well as a rolling release distribution. In fact, Arch Linux forms as the basis for SteamOS. openSUSE Tumbleweed is another good rolling release distribution, and Fedora with its semi-rolling release cycle is also popular. Distributions with rolling and semi-rolling release cycles benefit from getting access to the most recent drivers and software, but with the caveat of keeping an eye on updates to avoid possible breakages.
+
+Surprisingly, Ubuntu doesn't provide Gamescope as a package (although there is plan for it to be available for version 25.04). There are intructions available on Gamescope's [README.md](https://github.com/ValveSoftware/gamescope) file on how to build Gamescope from source.
+
+Then of course there are distributions like Bazzite, Nobara and ChimeraOS that are purposely built to provide the SteamOS or Steam Deck experience out of the box.
+
+One thing to note is that some distributions (like Manjaro) provide packages or repositories for [gamescope-session-steam](https://github.com/ChimeraOS/gamescope-session-steam) maintained by ChimeraOS. This is a collection of scripts that achieves the same results of launching into SteamOS mode from the display manager. 
+
+With these alternatives in mind, this document aims to be useful in explaining how SteamOS works and the freedom in setting up on any linux distribution.
+
+Arch Linux seems to be the natural choice and will be used as the example throughout this document.
 
 #### A display manager and desktop environment installed?
 
@@ -54,6 +65,7 @@ That said, Gamescope is available in other distributions like Debian or Fedora. 
   * `sudo pacman -Syu multilib/steam`
   * For AMD GPUs, make sure to select and install [lib32-vulkan-radeon](https://archlinux.org/packages/?name=lib32-vulkan-radeon) when prompted
 * This should work with the [steam-native](https://archlinux.org/packages/?name=steam-native-runtime) package as well
+* Flatpak version of Steam hasn't been tested yet to see if it works for this.
 
 #### A code editor?
 
