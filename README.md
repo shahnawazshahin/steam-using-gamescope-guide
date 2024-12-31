@@ -340,7 +340,7 @@ This will close Steam gracefully.
 
 #### Applying fixes for software updates
 
-Valve are continuously introducing new features and updates to Steam and Gamescope. The "OS Update Channel" is one of these new features that requires a list of available channels under beta participation. Without this, updates will stop working from within SteamOS mode. Creating a script to provide a dummy item for the "OS Update Channel" fixes the is issue.
+Valve are continuously introducing new features and updates to Steam and Gamescope. The "OS Update Channel" is one of these new features, and expects a script called `steamos-select-branch` to provide a list of available channels under beta participation. Without this, updates will stop working from within SteamOS mode. Creating the `steamos-select-branch` that provides a dummy item for the "OS Update Channel" fixes the is issue.
 
 Software updates also tries to invoke any available bios updates for the Steam Deck. This is not required for linux distributions, so a dummy script is created that simply exits (thinking that any bios update tasks has been carried out).
 
