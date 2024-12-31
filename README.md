@@ -71,6 +71,7 @@ That said, Gamescope is available in other distributions like Debian or Fedora. 
 * Add a script to launch Steam in Gamescope and SteamOS mode
 * Setting up a new session in the display manager (e.g., SDDM, GDM)
 * Add a script to switch back to 'desktop mode' (back to the display manager)
+* Apply fixes for software updates
 
 ### Instructions
 
@@ -205,6 +206,55 @@ To enable the `Switch to Desktop` invoke Steam to shut down the `steamos-session
   * Launching in an embeeded session by logging off from the desktop (KDE Plasma) and log in again using `Steam (gamescope)` from the session selection
 * Using the `Esc` key on the keyboard, or the guide button on your controller (e.g. Xbox button, PS button, Steam button, Stadia button, etc.), select the `Power` option, then select `Switch to Desktop` to return to the display manager login
 
+#### 9. Apply fixes for software updates
+
+To fix the issue with software updates within SteamOS mode, a script called `steamos-select-branch` is required and will be created and placed under the `/usr/bin` folder.
+
+* (If it does not exist already) create a `Developer` folder in your `HOME` location using a file manager or from the command line as follows
+
+  > `mkdir ~/Developer`
+
+* Using a code editor, create a new file named `steamos-select-branch` in the `Developer` folder, add the following lines to the file and then save the file
+
+  > `~/Developer/steamos-select-branch`
+  >
+  > ---
+  >
+  > `#!/bin/bash`
+  >
+  > `echo "Not applicable for this OS"`
+
+* From the terminal, set the permissions to `steamos-select-branch` and then copy the script into `/usr/bin/` folder
+
+  > `chmod +x ~/Developer/steamos-select-branch`
+  >
+  > `sudo cp ~/Developer/steamos-select-branch /usr/bin/`
+
+Another script that SteamOS mode tries to invoke when running software updates within SteamOS mode is `jupiter-biosupdate`. For this, a dummy script will be created that will simply run an `exit` command.
+
+* Using a code editor, create a new file named `jupiter-biosupdate` in the `Developer` folder, add the following lines to the file and then save the file
+
+  > `~/Developer/jupiter-biosupdate`
+  >
+  > ---
+  >
+  > `#!/bin/bash`
+  >
+  > `exit 0;`
+
+* From the terminal, set the permissions to `jupiter-biosupdate` and then copy the script into `/usr/bin/` folder
+
+  > `chmod +x ~/Developer/jupiter-biosupdate`
+  >
+  > `sudo cp ~/Developer/jupiter-biosupdate /usr/bin/`
+
+* To test this:
+  * Launch Steam using Gamescope in SteamOS mode
+  * Select Steam menu and navigate to Settings
+  * Check the "Check for Updates" button under "System" if it is available.
+    * Notice that "Not applicable for this OS" is also populated for "OS Update Channel".
+  * Updates should work when selecting the "Check for Updates" button but it will prompt an error in the end, which can be ignored.
+
 ### Why these step-by-step instructions?
 
 #### Install Gamescope?
@@ -287,6 +337,14 @@ How this can be achieved? Thankfully, there is a simple command to tell Steam to
   > `steam -shutdown`
 
 This will close Steam gracefully.
+
+#### Applying fixes for software updates
+
+Valve are continuously introducing new features and updates to Steam and Gamescope. The "OS Update Channel" is one of these new features, and expects a script called `steamos-select-branch` to provide a list of available channels under beta participation. Without this, updates will stop working from within SteamOS mode. Creating the `steamos-select-branch` that provides a dummy item for the "OS Update Channel" fixes the is issue.
+
+Software updates also tries to invoke any available bios updates for the Steam Deck. This is not required for linux distributions, so a dummy script is created that simply exits (thinking that any bios update tasks has been carried out).
+
+AN alternative workaround to updating Steam is to launch Steam from the desktop and check for updates from there. 
 
 ## References
 
