@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Updates are managed separately, so state that
-# update has already been applied and exit.
-echo "Applied an update"
-exit 0;
+# Steam client updates are managed separately,
+# so in this case return exit code 7 stating 
+# no system updates.
+exit 7;
