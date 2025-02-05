@@ -242,6 +242,24 @@ To fix the issue with software updates within SteamOS mode, a script called `ste
   >
   > `sudo cp ~/Developer/steamos-select-branch /usr/bin/`
 
+Next, when checking for Steam Client updates via SteamOS mode it tries to invoke a script called `steamos-update`. For this, a dummy script will be created that will simply run an `exit` command with exit code 7 (indicating that no system updates are required).
+
+* Using a code editor, create a new file named `steamos-update` in the `Developer` folder, add the following lines to the file and then save the file
+
+  > `~/Developer/steamos-update`
+  >
+  > ---
+  >
+  > `#!/bin/bash`
+  >
+  > `exit 7;`
+
+* From the terminal, set the permissions to `steamos-update` and then copy the script into `/usr/bin/` folder
+
+  > `chmod +x ~/Developer/steamos-update`
+  >
+  > `sudo cp ~/Developer/steamos-update /usr/bin/`
+
 Another script that SteamOS mode tries to invoke when running software updates within SteamOS mode is `jupiter-biosupdate`. For this, a dummy script will be created that will simply run an `exit` command.
 
 * Using a code editor, create a new file named `jupiter-biosupdate` in the `Developer` folder, add the following lines to the file and then save the file
@@ -354,9 +372,9 @@ This will close Steam gracefully.
 
 Valve are continuously introducing new features and updates to Steam and Gamescope. The "OS Update Channel" is one of these new features, and expects a script called `steamos-select-branch` to provide a list of available channels under beta participation. Without this, updates will stop working from within SteamOS mode. Creating the `steamos-select-branch` that provides a dummy item for the "OS Update Channel" fixes the is issue.
 
-Software updates also tries to invoke any available bios updates for the Steam Deck. This is not required for linux distributions, so a dummy script is created that simply exits (thinking that any bios update tasks has been carried out).
+Software updates also tries to invoke any available system and bios updates for the Steam Deck. This is not required for linux distributions, so two dummy scripts are created that simply exits (thinking that any system and bios updates has been carried out).
 
-AN alternative workaround to updating Steam is to launch Steam from the desktop and check for updates from there. 
+An alternative workaround to updating Steam is to launch Steam from the desktop and check for updates from there. 
 
 ## References
 
