@@ -1,3 +1,17 @@
 #!/bin/bash
 
-gamescope --mangoapp -e -- steam -steamdeck -steamos3
+# Assume that MangoHud is not installed
+MANGOAPP_FLAG=""
+
+# Check that mangoapp is available to see 
+if command -v mangoapp &> /dev/null;
+then
+    MANGOAPP_FLAG="--mangoapp"
+else
+    printf "[%s] [Info] 'mangoapp' is not available on your system. Check to see that MangoHud is installed.\n" $0
+    printf "[%s] [Info] Continuing without the '--mangoapp' flag.\n" $0
+fi
+
+gamescope \
+    $MANGOAPP_FLAG \
+    -e -- steam -steamdeck -steamos3
