@@ -20,7 +20,7 @@ Both the Steam client for Linux and Gamescope are available for a variety of Lin
 This guide will explain how to set up your Linux install to launch into SteamOS mode from the display manager (e.g., login screen). No complicated scripts or configurations are required.
 
 * To help get set up quickly and easy, continue following this `README.md` guide.
-* For details on how this all works, head over to the [wiki page](/wiki/Steam-using-Gamescope-guide-%E2%80%90-Wiki-page).
+* For details on how this all works, head over to the [wiki page](https://github.com/shahnawazshahin/steam-using-gamescope-guide/wiki/Steam-using-Gamescope-guide-%E2%80%90-Wiki-page).
 
 ### Why do this?
 
@@ -31,7 +31,7 @@ This guide will explain how to set up your Linux install to launch into SteamOS 
 
 ## Before we begin
 
-For a detailed guide on how this all works, please refer to the [wiki page](/wiki/Steam-using-Gamescope-guide-%E2%80%90-Wiki-page).
+For a detailed guide on how this all works, please refer to the [wiki page](https://github.com/shahnawazshahin/steam-using-gamescope-guide/wiki/Steam-using-Gamescope-guide-%E2%80%90-Wiki-page).
 
 The following are assumed:
 
