@@ -73,13 +73,13 @@ Gamescope is available as a package for most popular distributions. Refer to the
 
 However...
 
-In practice, Gamescope works very well on some Linux distributions like Fedora and Arch Linux but not on others like Debian and other related distributions. Both Gamescope and the Steam client are constantly updated with new features, and perhaps this is why rolling and semi-rolling release Linux distributions work well.
+In practice, Arch Linux and Fedora are the two Linux distributions that works well.Other distributions like Debian or Ubuntu can vary but are improving over time.
+
+Both Gamescope and the Steam client are constantly updated with new features, and having Linux distributions with rolling and semi-rolling keeps up with the pace.
 
 > Note:
 >
-> Surprisingly, there isn't an official package for Gamescope on Ubuntu. The package, however, is planned to be available in Ubuntu 25.04. Unfortunately, this means that Gamescope binaries aren't available for Ubuntu and other derivatives (e.g., Linux Mint) for now.
->
-> It is possible to build and install Gamescope manually if the binary package isn't available. Refer to the ['Building'](https://github.com/ValveSoftware/gamescope?tab=readme-ov-file#building) section on the [Gamescope repository on GitHub](https://github.com/ValveSoftware/gamescope).
+> Whilst not as straightforward, it is possible to build and install Gamescope manually if the binary package isn't available. Refer to the ['Building'](https://github.com/ValveSoftware/gamescope?tab=readme-ov-file#building) section on the [Gamescope repository on GitHub](https://github.com/ValveSoftware/gamescope).
 
 #### Availability of MangoHud?
 
