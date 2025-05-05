@@ -3,7 +3,9 @@
 # Assume that MangoHud is not installed
 MANGOAPP_FLAG=""
 
-# Check that mangoapp is available to see 
+# Check that mangoapp is available. Set the flag if it exists,
+# otherwise inform to check that MangoHud is installed and
+# proceed without the flag.
 if command -v mangoapp &> /dev/null;
 then
     MANGOAPP_FLAG="--mangoapp"
