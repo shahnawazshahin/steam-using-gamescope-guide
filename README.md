@@ -1,387 +1,382 @@
-# Steam using Gamescope guide
+# Steam using Gamescope guide (aka DIY SteamOS mode)
 
-A step-by-step guide in setting up Arch Linux to launch Steam using Gamescope in SteamOS mode as an embedded session without a display manager.
+A guide for setting up your favourite Linux distribution to launch Steam into SteamOS mode from the display manager (login screen) using Gamescope.
+
+## Background
+
+SteamOS is an Arch Linux based operating system developed by Valve. It is a gaming focused operating system for Steam Deck and other devices from partners working closely with Valve. At the moment, SteamOS isn't officially supported to run on different computers.
+
+There are other Linux distributions, however, that leverages the excellent work from Valve and the community to provide excellent alternatives such as [Bazzite](https://bazzite.gg/) and the [Nobara Project](https://nobaraproject.org/). They've contributed additional tools and fixes to provide a SteamOS experience for different computers, making it quick and easy to set up a gaming rig with a console-like experience.
+
+Various scripts, tools, patches, and policies are included in SteamOS and other related distributions to provide an optimised experience. However, the fundamental components for SteamOS mode to work are:
+
+* The Steam client for Linux for the frontend.
+* A microcompositor called [Gamescope](https://github.com/ValveSoftware/gamescope).
+
+Both the Steam client for Linux and Gamescope are available for a variety of Linux distributions. Therefore, it is possible for *`anyone`* to launch into SteamOS mode from their Linux desktop of their choice (with a caveat - more on that later).
 
 ## Purpose
 
-The guide aims to provide a simple set of instructions that will enable an experience similar to the Steam Deck but on your computer.
+This guide will explain how to set up your Linux install to launch into SteamOS mode from the display manager (e.g., login screen). No complicated scripts or configurations are required.
 
-Rather than a 'game mode first' experience with the option to launch the desktop (like the Steam Deck), instead it will allow a choice of logging into a full, flexible desktop with the option to launch directly into game mode.
-
-This is achieved by using a microcompositor called [Gamescope](https://github.com/ValveSoftware/gamescope) to launch Steam in a separate session without a window manager.
+* To help get set up quickly and easy, continue following this `README.md` guide.
+* For details on how this all works, head over to the [wiki page](/wiki/Steam-using-Gamescope-guide-%E2%80%90-Wiki-page).
 
 ### Why do this?
 
-* To enable a console-like experience when using a desktop or mini PC - useful for a living room or entertainment centre set up
-* The possibility of lower latency and better frame rates in games for a more responsive experience
-* To experience what a Steam Deck is like
-* To understand (and appreciate) the excellent work that Valve (and their partners) have put in
-* The freedom to use any linux distribution that supports Gamescope, and not having to resort to tailor-made distributions
+* The freedom to use any Linux distribution that supports Gamescope and Steam client for Linux - you don't need SteamOS or similar distributions to get the SteamOS experience.
+* The freedom to use any desktop environment of your choice (e.g., [Plasma Desktop](https://kde.org/plasma-desktop/), [Gnome](https://www.gnome.org/), [Cinnamon](https://github.com/linuxmint/Cinnamon), etc).
+* A much simpler way to launch into SteamOS mode directly from the display manager (login screen) (e.g., [SDDM](https://github.com/sddm/sddm), [GDM](https://wiki.gnome.org/Projects/GDM)), without any complex scripts, PolicyKit configurations, and unnecessary updates.
+* To understand (and appreciate) the excellent work that Valve, the community, and their partners have put in to SteamOS.
 
 ## Before we begin
 
-Before we begin the following are assumed:
+For a detailed guide on how this all works, please refer to the [wiki page](/wiki/Steam-using-Gamescope-guide-%E2%80%90-Wiki-page).
 
-* A PC with an AMD iGPU or AMD dedicated GPU
-* Any linux distribution that provides Gamescope as a package (Arch Linux will be used as an example)
-* A display manager and desktop environment installed (e.g., SDDM and KDE Plasma, GDM and Gnome)
-* Steam installed
-* MangoHud installed
-* A code editor installed
+The following are assumed:
+
+* A PC with an AMD iGPU or AMD dedicated GPU.
+* A display manager (SDDM and GDM have been tested).
+* Steam client for Linux is installed.
+* Gamescope is available on your Linux distribution of choice.
+* MangoHud is available on the Linux distribution of choice.
+
+Please take time in going through this `README.md` guide so that you feel confident before proceeding and to avoid any issues.
 
 ### Why these requirements?
 
 #### A PC with an AMD iGPU or AMD dedicated GPU?
 
-[Gamescope](https://github.com/ValveSoftware/gamescope) is designed to run on Mesa + AMD or Intel, or other Mesa/DRM drivers with minimal effort. It can also work with the NVIDIA proprietary driver (version 515.43.04+) with the `nvidia-drm.modeset=1` set to the kernel parameter.
+[Gamescope](https://github.com/ValveSoftware/gamescope) is designed to run on Mesa + AMD with minimal effort, and hence Gamescope works very well with AMD GPUs.
 
-But in practice the out-of-the-box experiece isn't as smooth and pleasant experience with Intel or NVIDIA drivers when integrating Gamescope with Steam.
+Whilst Intel GPUs isn't yet supported it can work but is a bit hit and miss - the experience may be suboptimal.
 
-#### Which linux distribution shall I use, and why refer to Arch Linux as an example?
-
-Head over to Gamescope's [README.md](https://github.com/ValveSoftware/gamescope) file on GitHub for a list of linux distributions and the version of Gamescope available.
-
-Arch Linux seems to work quite well as a rolling release distribution. In fact, Arch Linux forms as the basis for SteamOS. openSUSE Tumbleweed is another good rolling release distribution, and Fedora with its semi-rolling release cycle is also popular. Distributions with rolling and semi-rolling release cycles benefit from getting access to the most recent drivers and software, but with the caveat of keeping an eye on updates to avoid possible breakages.
-
-Surprisingly, Ubuntu doesn't provide Gamescope as a package (although there is plan for it to be available for version 25.04). There are intructions available on Gamescope's [README.md](https://github.com/ValveSoftware/gamescope) file on how to build Gamescope from source.
-
-Then of course there are distributions like Bazzite, Nobara and ChimeraOS that are purposely built to provide the SteamOS or Steam Deck experience out of the box.
-
-One thing to note is that some distributions (like Manjaro) provide packages or repositories for [gamescope-session-steam](https://github.com/ChimeraOS/gamescope-session-steam) maintained by ChimeraOS. This is a collection of scripts that achieves the same results of launching into SteamOS mode from the display manager. 
-
-With these alternatives in mind, this document aims to be useful in explaining how SteamOS works and the freedom in setting up on any linux distribution.
-
-Arch Linux seems to be the natural choice and will be used as the example throughout this document.
+Gamescope is known to work with NVIDIA GPUs, but unfortunately it can occasionally break when either NVIDIA drivers for Linux or Gamescope are updated.
 
 #### A display manager and desktop environment installed?
 
-* This will make it easier to understand the concept and setting up the configurations and scripts
-* Also, the Steam Deck comes with KDE Plasma - it will be nice in keeping things consistent
-* But it can also work with other display managers and desktop environments like GDM and Gnome
+An option will be added to the session selector in the display manager to select from and log in directly to SteamOS mode.
 
-#### Steam installed?
+#### Steam client for Linux installed?
 
-* The [steam](https://archlinux.org/packages/?name=steam) is the recommended package for Arch Linux
-  * `sudo pacman -Syu multilib/steam`
-  * For AMD GPUs, make sure to select and install [lib32-vulkan-radeon](https://archlinux.org/packages/?name=lib32-vulkan-radeon) when prompted
-* This should work with the [steam-native](https://archlinux.org/packages/?name=steam-native-runtime) package as well
-* Flatpak version of Steam hasn't been tested yet to see if it works for this.
+Make sure that the Steam client for Linux is installed and on your system. Refer to the documentation from the Linux distribution on how to install the Steam launcher package **and make sure to install the latest Steam client using the launcher**.
 
-#### A code editor?
+> Note:
+>
+> * For AMD GPUs, make sure to select and install the `lib32-vulkan-radeon` package if prompted.
+>
+> * The Flatpak version of Steam hasn't been tested yet to confirm if it works.
 
-* [Visual Studio Code](https://wiki.archlinux.org/title/Visual_Studio_Code) is a popular choice
-  * `sudo pacman -Syu extra/code`
-* The [code](https://archlinux.org/packages/?name=code) package is available on Arch Linux
+#### Availability of Gamescope?
 
-## Step-by-step guide
+Gamescope is available as a package for most popular distributions. Refer to the [Status of Gamescope Packages](https://github.com/ValveSoftware/gamescope?tab=readme-ov-file#status-of-gamescope-packages) to see which Linux distribution provides this package.
 
-* Install Gamescope
-* Install MangoHud
-* Testing Steam launching with Gamescope
-* Run through Steam Deck set up
-* Testing Steam launching with Gamescope in SteamOS mode and Mangoapp
-* Add a script to launch Steam in Gamescope and SteamOS mode
-* Setting up a new session in the display manager (e.g., SDDM, GDM)
-* Add a script to switch back to 'desktop mode' (back to the display manager)
-* Apply fixes for software updates
+However...
+
+In practice, Gamescope works very well on some Linux distributions like Fedora and Arch Linux but not on others like Debian and other related distributions. Both Gamescope and the Steam client are constantly updated with new features, and perhaps this is why rolling and semi-rolling release Linux distributions work well.
+
+> Note:
+>
+> Surprisingly, there isn't an official package for Gamescope on Ubuntu. The package, however, is planned to be available in Ubuntu 25.04. Unfortunately, this means that Gamescope binaries aren't available for Ubuntu and other derivatives (e.g., Linux Mint) for now.
+>
+> It is possible to build and install Gamescope manually if the binary package isn't available. Refer to the ['Building'](https://github.com/ValveSoftware/gamescope?tab=readme-ov-file#building) section on the [Gamescope repository on GitHub](https://github.com/ValveSoftware/gamescope).
+
+#### Availability of MangoHud?
+
+Technically this is optional, but to get the details on the performance of your system while gaming (e.g., frame counter, CPU and GPU usage, etc.) requires MangoHud installed. Refer to the [MangoHud](https://github.com/flightlessmango/MangoHud) for further information.
+
+## Quick setup guide
+
+* Install Gamescope.
+* Install MangoHud.
+* Download and install a set of scripts from this repository to help launch into SteamOS mode.
+  * These includes fixes for running SteamOS set up for first time, performing updates within the Steam client, and switch back to the desktop.
+* Launch into SteamOS mode and run through the set up process.
 
 ### Instructions
 
+For these instructions, Arch Linux and Fedora will be used as examples for installing packages. It is assumed that privileged access will be required for running these instructions (e.g., using `sudo`).
+
 #### 1. Install Gamescope
 
-* Install the gamescope package from the terminal
+Install the gamescope package from the terminal.
 
-  > `sudo pacman -Syu gamescope`
+* For Arch-based distributions:
+
+  ```bash
+  pacman -Sy gamescope
+  ```
+
+* For Fedora-based distributions:
+
+  ```bash
+  dnf install gamescope
+  ```
 
 #### 2. Install MangoHud
 
-* Install the manguhud and lib32-mangohud packages (available under multilib) from the terminal
+Install the manguhud and lib32-mangohud packages from the terminal
 
-  > `sudo pacman -Syu mangohud lib32-mangohud`
+* For Arch-based distributions (requires multilib):
 
-#### 3. Testing Steam launch in Gamescope
+  ```bash
+  pacman -Sy mangohud lib32-mangohud
+  ```
 
-* To test this, run the following command to launch Steam within a Gamescope instance from the terminal
+* For Fedora-based distributions:
 
-  > `gamescope -e -- steam -steamdeck`
+  ```bash
+  dnf install mangohud
+  ```
 
-* Steam will open in a window with a logo appearing and then be presented with a welcome screen.
+#### 3. Download and install the helper scripts
 
-#### 4. Run through Steam Deck set up
+Download this repository and unpack the archive into a folder. It includes this README.md file, a set of helper scripts to launch Steam client into SteamOS mode, and an `installer.sh` script and `uninstaller.sh` script to install and uninstall the helper scripts respectively.
 
-* Run through the set up process by:
-  * Selecting the language of your choice
-  * Setting the timezome
-  * Logging on to your Steam account
-* You will then be presented with the home screen (like Big Picture mode).
-* Close the window to exit from Steam.
+##### Simple option
 
-#### 5. Testing Steam launch with Gamescope in SteamOS mode and Mangoapp
+The simple option is to open a terminal within the unpacked folder (or repository) and run the `installer.sh` script.
 
-* Run the following command from the terminal [^1]
+  ```bash
+  ./installer.sh
+  ```
 
-  > `gamescope --mangoapp -e -- steam -steamdeck -steamos3`
+##### Manual option
 
-* This will run Steam again in a in a window. Navigate to the Steam menu, then Settings, and you should be able to see the bluetooth settings and other available networks.
-* Using a controller, open the Quick menu (holding the guide button + A) and select the desired level for the `Performance Overlay`. Run a game and the performance overlay should appear.
+Alternatively, manually set the correct permissions and copy each helper script with the following set of commands. File permissions have been assigned to these helper scripts but feel free to cross-check.
 
-[^1]: Be sure to type `--mangoapp` and not `--mangohud`. Also, don't miss the `3` when typing `-steamos3` as it won't work without it.
+* Create a `steamos-polkit-helpers` folder under `/usr/bin`:
 
-#### 6. Add a script to launch Steam in Gamescope and SteamOS mode
+  ```bash
+  mkdir /usr/bin/steamos-polkit-helpers
+  ```
 
-* Create a `Developer` folder in your `HOME` location using a file manager or from the command line as follows
+* `gamescope-session`:
 
-  > `mkdir ~/Developer`
+  ```bash
+  chmod 755 ./usr/bin/gamescope-session
+  ```
 
-* Using a code editor, create a new file called `gamescope-session` in the `Developer` folder, add the following lines to the file and then save the file
+  ```bash
+  cp ./usr/bin/gamescope-session /usr/bin/gamescope-session
+  ```
 
-  > `~/Developer/gamescope-session`
-  >
-  > ---
-  >
-  > `#!/bin/bash`
-  >
-  > `gamescope --mangoapp -e -- steam -steamdeck -steamos3`
+* `jupiter-biosupdate`:
 
-* Set the permissions to the file and copy the file to the `/usr/bin/` folder
+  ```bash
+  chmod 755 ./usr/bin/jupiter-biosupdate
+  ```
 
-  > `chmod +x ~/Developer/gamescope-session`
-  >
-  > `sudo cp ~/Developer/gamescope-session /usr/bin/`
+  ```bash
+  chmod 755 ./usr/bin/steamos-polkit-helpers/jupiter-biosupdate
+  ```
 
-* Test the script by running the command
+  ```bash
+  cp ./usr/bin/jupiter-biosupdate /usr/bin/jupiter-biosupdate
+  ```
 
-  > `gamescope-session`
+  ```bash
+  cp ./usr/bin/steamos-polkit-helpers/jupiter-biosupdate /usr/bin/steamos-polkit-helpers/jupiter-biosupdate
+  ```
 
-* Steam will open in a window running in in Gamescope and SteamOS mode.
-* Close the window.
+* `steamos-select-branch`:
 
-#### 7. Setting up a new session in the display manager
+  ```bash
+  chmod 755 ./usr/bin/steamos-select-branch
+  ```
 
-* (If it does not exist already) create a `Developer` folder in your `HOME` location using a file manager or from the command line as follows
+  ```bash
+  cp ./usr/bin/steamos-select-branch /usr/bin/steamos-select-branch
+  ```
 
-  > `mkdir ~/Developer`
+* `steamos-session-select`:
 
-* Using a code editor, create a new file called `steam.desktop` in the `Developer` folder, add the following lines to the file and then save the file
+  ```bash
+  chmod 755 ./usr/bin/steamos-session-select
+  ```
 
-  > `~/Developer/steam.desktop`
-  >
-  > ---
-  >
-  > `[Desktop Entry]` \
-  > `Encoding=UTF-8` \
-  > `Name=Steam (gamescope)` \
-  > `Comment=Launch Steam within Gamescope` \
-  > `Exec=gamescope-session` \
-  > `Type=Application` \
-  > `DesktopNames=gamescope`
+  ```bash
+  cp ./usr/bin/steamos-session-select /usr/bin/steamos-session-select
+  ```
 
-* From the terminal, copy the `steam.desktop` file into `/usr/share/wayland-sessions/` folder
+* `steamos-update`:
 
-  > `sudo cp ~/Developer/steam.desktop /usr/share/wayland-sessions/`
+  ```bash
+  chmod 755 ./usr/bin/steamos-update
+  ```
 
-* Log off from the desktop environment (e.g., KDE Plasma, Gnome).
-* Follow the next steps based on the display manager used:
-  * For SDDM, on the login screen select `Steam (gamescope)` from the session selection (located near the bottom left corner of the screen). Use the same login and password as you would log on to the linux desktop.
-  * For GDM, on the login screen select your username and then select `Steam (gamescope)` from the session selection (located near the bottom right corner of the screen). Use the same password as you would log on to the linux desktop.
-* This will launch Steam full screen in Gamescope and SteamOS mode.
+  ```bash
+  chmod 755 ./usr/bin/steamos-polkit-helpers/steamos-update
+  ```
 
-#### 8. Add a script to switch back to 'desktop mode' (back to login screen)
+  ```bash
+  cp ./usr/bin/steamos-update /usr/bin/steamos-update
+  ```
 
-To enable the `Switch to Desktop` invoke Steam to shut down the `steamos-session-select` will be created and placed under the `/usr/bin` folder.
+  ```bash
+  cp ./usr/bin/steamos-polkit-helpers/steamos-update /usr/bin/steamos-polkit-helpers/steamos-update
+  ```
 
-* (If it does not exist already) create a `Developer` folder in your `HOME` location using a file manager or from the command line as follows
+* `steamos-set-timezone`:
 
-  > `mkdir ~/Developer`
+  ```bash
+  chmod 755 ./usr/bin/steamos-polkit-helpers/steamos-set-timezone
+  ```
 
-* Using a code editor, create a new file named `steamos-session-select` in the `Developer` folder, add the following lines to the file and then save the file
+  ```bash
+  cp ./usr/bin/steamos-polkit-helpers/steamos-set-timezone /usr/bin/steamos-polkit-helpers/steamos-set-timezone
+  ```
 
-  > `~/Developer/steamos-session-select`
-  >
-  > ---
-  >
-  > `#!/bin/bash`
-  >
-  > `steam -shutdown`
+* `steam.desktop`:
 
-* From the terminal, set the permissions to `steamos-session-select` and then copy the script into `/usr/bin/` folder
+  ```bash
+  chmod 644 ./usr/share/wayland-sessions/steam.desktop
+  ```
 
-  > `chmod +x ~/Developer/steamos-session-select`
-  >
-  > `sudo cp ~/Developer/steamos-session-select /usr/bin/`
+  ```bash
+  cp ./usr/share/wayland-sessions/steam.desktop /usr/share/wayland-sessions/steam.desktop
+  ```
 
-* Test this by either:
-  * Launching Steam using Gamescope in SteamOS mode as a regular desktop from the command prompt
 
-    > `gamescope --mangoapp -e -- steam -steamdeck -steamos3`
+#### 4. Launch SteamOS mode and run through SteamOS mode set up
 
-  * Launching in an embeeded session by logging off from the desktop (KDE Plasma) and log in again using `Steam (gamescope)` from the session selection
-* Using the `Esc` key on the keyboard, or the guide button on your controller (e.g. Xbox button, PS button, Steam button, Stadia button, etc.), select the `Power` option, then select `Switch to Desktop` to return to the display manager login
+* Return to the login screen (or display manager), either by logging off from the desktop environment (e.g., KDE, Gnome, Cinnamon, etc.) or restarting your computer.
+* From the login screen (or display manager), select `SteamOS mode (Gamescope)` from the session selection and then log in.
+  * For SDDM, on the login screen select `SteamOS mode (gamescope)` from the session selection (located near the bottom left corner of the screen). Use the same login and password as you would log on to the linux desktop.
+  * For GDM, on the login screen select your username and then select `SteamOS mode (gamescope)` from the session selection (located near the bottom right corner of the screen). Use the same password as you would log on to the linux desktop.
+* From the SteamOS welcome screen, run through the set up process by:
+  * Selecting the language of your choice.
+  * Setting the timezome.
+  * If not logged in, log on to your Steam account.
+  * Your computer will restart after completing the setup process.
+* Log back in to `SteamOS mode (Gamescope)` and enjoy!
 
-#### 9. Apply fixes for software updates
+## FAQs and troubleshooting
 
-To fix the issue with software updates within SteamOS mode, a script called `steamos-select-branch` is required and will be created and placed under the `/usr/bin` folder.
+### I've noticed that my computer cannot connect to the WiFi network name under SteamOS mode, but can on the desktop. How do I fix the WiFi connection issue when running in SteamOS mode?
 
-* (If it does not exist already) create a `Developer` folder in your `HOME` location using a file manager or from the command line as follows
+When connecting to the WiFi network using NetworkManager from the display manager or desktop, the passphrase is stored as encrypted on your system and won't be available for others to connect.
 
-  > `mkdir ~/Developer`
+With SteamOS, however, the WiFi network connection is stored so that other users can connect to the same network.
 
-* Using a code editor, create a new file named `steamos-select-branch` in the `Developer` folder, add the following lines to the file and then save the file
+One workaround is to log onto the display manager or desktop first, log out, and then log in to SteamOS mode. But this can be inconvenient and defeats the purpose of logging straight into SteamOS mode at boot.
 
-  > `~/Developer/steamos-select-branch`
-  >
-  > ---
-  >
-  > `#!/bin/bash`
-  >
-  > `echo "Not applicable for this OS"`
+Another workaround is to set the WiFi connection for others to connect to it. This is a more practical solution (and this is how SteamOS sets a network connection). But please note note the passphrase for the WiFi connection will be stored as plain text (read-only by root). Understandably this can be a concern, so ways to mitigate this to:
 
-* From the terminal, set the permissions to `steamos-select-branch` and then copy the script into `/usr/bin/` folder
+* Set up a guest WiFi on the network and allow SteamOS mode to connect to that.
+* Encrypt the drive on the system.
 
-  > `chmod +x ~/Developer/steamos-select-branch`
-  >
-  > `sudo cp ~/Developer/steamos-select-branch /usr/bin/`
+### When running Steam update in SteamOS mode, does my Linux install gets updated as well?
 
-Next, when checking for Steam Client updates via SteamOS mode it tries to invoke a script called `steamos-update`. For this, a dummy script will be created that will simply run an `exit` command with exit code 7 (indicating that no system updates are required).
+No, updates to your Linux install has to be performed separately using conventional methods.
 
-* Using a code editor, create a new file named `steamos-update` in the `Developer` folder, add the following lines to the file and then save the file
+It is possible to set up automatic updates depending on the Linux distribution to help keep your system up-to-date with features and security. But keep in mind of some of the risks of performing unattended upgrades.
 
-  > `~/Developer/steamos-update`
-  >
-  > ---
-  >
-  > `#!/bin/bash`
-  >
-  > `exit 7;`
+### On Fedora Linux, notifications keeps popping up on `steamwebhelper` crashing. How do I fix this?
 
-* From the terminal, set the permissions to `steamos-update` and then copy the script into `/usr/bin/` folder
+[TODO]
 
-  > `chmod +x ~/Developer/steamos-update`
-  >
-  > `sudo cp ~/Developer/steamos-update /usr/bin/`
+### I want to remove the changes made to my Linux install to launch into SteamOS mode. How do I do this?
 
-Another script that SteamOS mode tries to invoke when running software updates within SteamOS mode is `jupiter-biosupdate`. For this, a dummy script will be created that will simply run an `exit` command.
+The simple approach is to open a terminal within the unpacked folder (or repository) and run the `uninstaller.sh` script.
 
-* Using a code editor, create a new file named `jupiter-biosupdate` in the `Developer` folder, add the following lines to the file and then save the file
+Alternatively, manually remove the scripts and the `steamos-polkit-helpers` folder:
 
-  > `~/Developer/jupiter-biosupdate`
-  >
-  > ---
-  >
-  > `#!/bin/bash`
-  >
-  > `exit 0;`
+* `gamescope-session`:
 
-* From the terminal, set the permissions to `jupiter-biosupdate` and then copy the script into `/usr/bin/` folder
+  ```bash
+  rm /usr/bin/gamescope-session
+  ```
 
-  > `chmod +x ~/Developer/jupiter-biosupdate`
-  >
-  > `sudo cp ~/Developer/jupiter-biosupdate /usr/bin/`
+* `jupiter-biosupdate`:
 
-* To test this:
-  * Launch Steam using Gamescope in SteamOS mode
-  * Select Steam menu and navigate to Settings
-  * Check the "Check for Updates" button under "System" if it is available.
-    * Notice that "Not applicable for this OS" is also populated for "OS Update Channel".
-  * Updates should work when selecting the "Check for Updates" button but it will prompt an error in the end, which can be ignored.
+  ```bash
+  rm /usr/bin/jupiter-biosupdate
+  ```
 
-### Why these step-by-step instructions?
+  ```bash
+  rm /usr/bin/steamos-polkit-helpers/jupiter-biosupdate
+  ```
 
-#### Install Gamescope?
+* `steamos-select-branch`:
 
-[Gamescope](https://github.com/ValveSoftware/gamescope) is a micro compositor developed by Valve.
+  ```bash
+  rm /usr/bin/steamos-select-branch
+  ```
 
-It can be run in either:
+* `steamos-session-select`:
 
-* an embedded session use case (without a separate window manager), and
-* on top of a regular desktop (Gnome, KDE, Cinnamon, etc)
+  ```bash
+  rm /usr/bin/steamos-session-select
+  ```
 
-Valve has done some excellent work in allowing Gamescope to integrate with Steam, enabling to launch Steam in an embedded session with ease. This is pretty much the basis of how the Steam Deck launches Steam at boot.
+* `steamos-update`:
 
-#### Install MangoHud?
+  ```bash
+  rm /usr/bin/steamos-update
+  ```
 
-MangoHud is the tool used to allow Steam to display the 'Performance Overlay' for monitoring statistics like frames per second (FPS), resource utilisation, temperatures, etc.
+  ```bash
+  rm /usr/bin/steamos-polkit-helpers/steamos-update
+  ```
 
-The traditional approach was to set an environment variable `MANGOHUD=1` when launching Steam using Gamescope. MangoHud now comes with MangoApp, which is the preferred application to use with Gamescope.
+* `steamos-set-timezone`:
 
-#### Testing Steam launch with Gamescope in SteamOS mode and Mangoapp
+  ```bash
+  rm /usr/bin/steamos-polkit-helpers/steamos-set-timezone
+  ```
 
-It is also possible to use Gamescope with Steam on top of a regular desktop like KDE Plasma, Gnome, Cinnamon, etc. This makes it easier to test this concept by running a simple command from the terminal or command prompt.
+* `steam.desktop`:
 
-  > `gamescope --mangoapp -e -- steam -steamdeck`.
+  ```bash
+  rm /usr/share/wayland-sessions/steam.desktop
+  ```
+* `steamos-polkit-helpers`:
 
-Note: This command also enable MangoApp as well as launching into Steam Deck mode.
+  ```bash
+  rm -rf /usr/bin/steamos-polkit-helpers
+  ```
 
-#### Run through Steam Deck set up
+After that, remove the `mangohud` and `gamescope` packages:
 
-The welcome screen is usually presented when running Steam in Steam Deck mode for the first time. This is a similar experience found on the Steam Deck.
+* For Arch-based distributions:
 
-Without doing this it won't be possible to launch Steam using Gamescope in SteamOS mode as the application will fail on the update process that prevents this set up process to complete.
+  ```bash
+  pacman -Rs gamescope
+  ```
+  
+  ```bash
+  pacman -Rs mangohud lib32-mangohud
+  ```
 
-#### Testing Steam launch in Gamescope and SteamOS mode
+* For Fedora-based distributions:
 
-It is useful to test if Steam can launch using Gamescope in SteamOS mode as this will enable the following features:
+  ```bash
+  dnf remove gamescope
+  ```
 
-* The ability to connect to a network (without the need of a Network Manager or network configuration)
-* Add and remove bluetooth devices within Steam
-* Configure performance settings (e.g. mangohud, frame limit, scaling filter, etc)
+  ```bash
+  dnf remove mangohud
+  ```
 
-These features are useful when running Steam using Gamescope in an embedded session to avoid having to set up connections and bluetooth devices separately on a desktop session.
+### I'm interested in understanding more about these script files. What do each of these script files do?
 
-#### Add a script to launch Steam in Gamescope and SteamOS mode
+Details of each helper script include:
 
-Steam supports a number of flags to tweak and optimise the experience when running Steam using Gamescope in an embedded session. These are often used for the Steam Deck for hardware compatibility (e.g. LCD and OLED screens, HDR, fan control, etc.)
+* `usr/bin/gamescope-session`: A script that launches the Steam client into SteamOS mode using Gamescope.
 
-Although this isn't required for the purpose of this concept, it will be useful to prepare a script to launch Steam using Gamescope and make further tweaks in future.
+* `usr/bin/jupiter-biosupdate`: A dummy script that informs the Steam client of no bios updates as they`re only relevant for the Steam Deck and other SteamOS-compatible devices.
 
-That said, such tweaks can affect compatibility when running games. Keeping things as simple and vanilla as possible seems to be the most compatible way of launching games from Steam.
+* `usr/bin/steamos-select-branch`: A dummy script that populates a value for Steam client updates to function but does not refer to specific SteamOS builds since updates to the operating system is managed separately.
 
-#### Setting up a new session in the display manager
+* `usr/bin/steamos-session-select`: A script that invokes the Steam client to shutdown and return to the login screen (or display manager).
 
-Adding a session entry to the display manager (e.g., SDDM, GDM) will allow Steam to launch using Gamescope in SteamOS mode directly without the need of a separate window manager.
+* `usr/bin/steamos-update`: A dummy script that informs the Steam client that updates to the underlying operating system is applied (since this is managed separately).
 
-Once it is running you can navigate through Steam using the keyboard or a controller. Using the `Esc` key on your keyboard or the guide button on the controller (e.g. Xbox button, PS button, Steam button, Stadia button, etc.) will open the Steam menu.
+* `usr/bin/steamos-polkit-helpers/jupiter-biosupdate`: A dummy helper script that calls the `/usr/bin/jupiter-biosupdate` script. Steam client for Linux expects this script available in the `steamos-polkit-helpers` subfolder.
 
-> **Pro tip**
->
-> You can open the Quick menu using the controller by holding the guide button + A.
+* `usr/bin/steamos-polkit-helpers/steamos-set-timezone`: A dummy helper script that simply exits since it is assumed the timezone on your system is already set. This is required when setting SteamOS mode for the first time. Steam client for Linux expects this script available in the `steamos-polkit-helpers` subfolder.
 
-It is worth noting that if using KDE6 it is assumed that Wayland is used. With KDE5 there is a possibility that X11 is used
-by default.
+* `usr/bin/steamos-polkit-helpers/steamos-update`: A dummy helper script that calls the `/usr/bin/steamos-update` script. Steam client for Linux expects this script available in the `steamos-polkit-helpers` subfolder.
 
-If `Steam (gamescope)` doesn't appear in the session entry on the display manager then copy the `steam.desktop` file into the `/usr/share/xsessions/` folder as well as the `/usr/share/wayland-sessions/`.
-
-#### Add a script to switch back to 'desktop mode' (back to the display manager)
-
-When running Steam using Gamescope in SteamOS mode, you can send the computer to `Sleep`, `Shutdown` or `Restart` from selecting `Power` from the Steam menu.
-
-However, when selecting `Switch to Desktop` it tries to invoke a script called `steamos-session-select`. Selecting the `Switch to Desktop` option will not work without the `steamos-session-select`script.
-
-In this case, the `steamos-session-select` script will be created to invoke Steam to shut down and (in turn) return to the login screen (display manager). The `steamos-session-select` is normally expected in the `/usr/bin` folder.
-
-How this can be achieved? Thankfully, there is a simple command to tell Steam to shutdown - `steam -shutdown`. We can test this with the following:
-
-* Launch Steam on your desktop session
-* Run the following command from a terminal:
-
-  > `steam -shutdown`
-
-This will close Steam gracefully.
-
-#### Applying fixes for software updates
-
-Valve are continuously introducing new features and updates to Steam and Gamescope. The "OS Update Channel" is one of these new features, and expects a script called `steamos-select-branch` to provide a list of available channels under beta participation. Without this, updates will stop working from within SteamOS mode. Creating the `steamos-select-branch` that provides a dummy item for the "OS Update Channel" fixes the is issue.
-
-Software updates also tries to invoke any available system and bios updates for the Steam Deck. This is not required for linux distributions, so two dummy scripts are created that simply exits (thinking that any system and bios updates has been carried out).
-
-An alternative workaround to updating Steam is to launch Steam from the desktop and check for updates from there. 
-
-## References
-
-* Gamescope:
-  * README.md - <https://github.com/ValveSoftware/gamescope>
-* Arch wiki:
-  * Gamescope - <https://wiki.archlinux.org/title/Gamescope>
-  * Steam - <https://wiki.archlinux.org/title/Steam>
-  * Vulkan - <https://wiki.archlinux.org/title/Vulkan>
-  * MangoHud - <https://wiki.archlinux.org/title/MangoHud>
+* `usr/share/wayland-sessions/steam.desktop`: A file that adds an option to the display manager (e.g., SDDM, GDM) that you can select and log into SteamOS mode. This calls the `/usr/bin/gamescope-session` script.
