@@ -73,7 +73,7 @@ Gamescope is available as a package for most popular distributions. Refer to the
 
 However...
 
-In practice, Arch Linux and Fedora are the two Linux distributions that works well.Other distributions like Debian or Ubuntu can vary but are improving over time.
+In practice, Arch Linux and Fedora are the two Linux distributions that works well. Other distributions like Debian or Ubuntu can vary but are improving over time.
 
 Both Gamescope and the Steam client are constantly updated with new features, and having Linux distributions with rolling and semi-rolling keeps up with the pace.
 
@@ -112,8 +112,13 @@ Install the gamescope package from the terminal.
   ```bash
   dnf install gamescope
   ```
+* For Ubuntu-based distributions:
 
-#### 2. Install MangoHud
+  ```bash
+  apt install gamescope
+  ```
+
+#### 2. Install MangoHud (Optional)
 
 Install the manguhud and lib32-mangohud packages from the terminal
 
@@ -128,6 +133,11 @@ Install the manguhud and lib32-mangohud packages from the terminal
   ```bash
   dnf install mangohud
   ```
+* For Ubuntu-based distributions:
+
+  ```bash
+  apt install mangohud
+  ```
 
 #### 3. Download and install the helper scripts
 
@@ -140,7 +150,6 @@ The simple option is to open a terminal within the unpacked folder (or repositor
   ```bash
   ./installer.sh
   ```
-
 ##### Manual option
 
 Alternatively, manually set the correct permissions and copy each helper script with the following set of commands. File permissions have been assigned to these helper scripts but feel free to cross-check.
@@ -252,6 +261,28 @@ Alternatively, manually set the correct permissions and copy each helper script 
 * Log back in to `SteamOS mode (Gamescope)` and enjoy!
 
 ## FAQs and troubleshooting
+
+#### Additional note for display managers running with through X11
+
+Some display managers on some distros run with with X11 by default, even if the default for the desktop environment is wayland. 
+At the moment, this script does not completely setup a wayland session to be able to launch from an X11 display manager. 
+This has been noted for Kubuntu 25.04 so far, but other Ubuntu-based distros are likely affected. 
+
+The current known workaround is to set your display manager to use Wayland. Currently only tested with SDDM.
+
+Workaround for SDDM: 
+1. Create a file: /etc/sddm.conf.d/10-wayland.conf 
+2. Copy and paste the following:
+  ```bash
+  [General]
+  DisplayServer=wayland
+  GreeterEnvironment=QT_WAYLAND_SHELL_INTEGRATION=layer-shell
+
+  [Wayland]
+  CompositorCommand=kwin_wayland --drm --no-lockscreen --no-global-shortcuts --locale1
+  ```
+3. Reboot (Or restart SDDM)
+  
 
 ### I've noticed that my computer cannot connect to the WiFi network name under SteamOS mode, but can on the desktop. How do I fix the WiFi connection issue when running in SteamOS mode?
 
