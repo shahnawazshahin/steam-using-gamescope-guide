@@ -266,11 +266,10 @@ Alternatively, manually set the correct permissions and copy each helper script 
 
 Some display managers on some distros run with with X11 by default, even if the default for the desktop environment is wayland. 
 At the moment, this script does not completely setup a wayland session to be able to launch from an X11 display manager. 
-This has been noted for Kubuntu 25.04 so far, but other Ubuntu-based distros are likely affected. 
 
 The current known workaround is to set your display manager to use Wayland. Currently only tested with SDDM.
 
-Workaround for SDDM: 
+Workaround for SDDM (Source: https://wiki.archlinux.org/title/SDDM#Wayland): 
 1. Create a file: /etc/sddm.conf.d/10-wayland.conf 
 2. Copy and paste the following:
   ```bash
