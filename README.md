@@ -69,13 +69,11 @@ Make sure that the Steam client for Linux is installed and on your system. Refer
 
 #### Availability of Gamescope?
 
-Gamescope is available as a package for most popular distributions. Refer to the [Status of Gamescope Packages](https://github.com/ValveSoftware/gamescope?tab=readme-ov-file#status-of-gamescope-packages) to see which Linux distribution provides this package.
+Gamescope is available in most package managers for popular distributions. Both Gamescope and the Steam client are constantly updated with new features, and having Linux distributions with rolling and semi-rolling release cycles (like Arch Linux and Fedora) helps keep up with the pace.
 
-However...
+Other distributions have most recently started catching up. For example, from Ubuntu 25.04 and onwards, Gamescope is available in the APT package manager.
 
-In practice, Arch Linux and Fedora are the two Linux distributions that works well. Other distributions like Debian or Ubuntu can vary but are improving over time.
-
-Both Gamescope and the Steam client are constantly updated with new features, and having Linux distributions with rolling and semi-rolling keeps up with the pace.
+Refer to the [Status of Gamescope Packages](https://github.com/ValveSoftware/gamescope?tab=readme-ov-file#status-of-gamescope-packages) to see which Linux distribution and versions provides this package. 
 
 > Note:
 >
