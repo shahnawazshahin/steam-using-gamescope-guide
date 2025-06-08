@@ -2,6 +2,8 @@
 
 A guide for setting up your favourite Linux distribution to launch Steam into SteamOS mode from the display manager (login screen) using Gamescope.
 
+For a detailed guide on how this works, please refer to the [wiki page](https://github.com/shahnawazshahin/steam-using-gamescope-guide/wiki/Steam-using-Gamescope-guide-%E2%80%90-Wiki-page).
+
 ## Background
 
 SteamOS is an Arch Linux based operating system developed by Valve. It is a gaming focused operating system for Steam Deck and other devices from partners working closely with Valve. At the moment, SteamOS isn't officially supported to run on different computers.
