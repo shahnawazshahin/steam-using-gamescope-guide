@@ -22,7 +22,11 @@ for card in /sys/class/drm/card[0-9]*; do
         read vendor <"${card}/device/vendor"
         read device <"${card}/device/device"
         PREFER_DEVICE="--prefer-vk-device "${vendor#0x}:${device#0x}""
-        break 2
+
+        # if output is embedded display - try to find other device
+        if [[ "${output#"$card"-}" != eDP* ]]; then
+            break 2
+        fi
     fi
   done
 done
