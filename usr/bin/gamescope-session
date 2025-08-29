@@ -10,8 +10,8 @@ if command -v mangoapp &> /dev/null;
 then
     MANGOAPP_FLAG="--mangoapp"
 else
-    printf "[%s] [Info] 'mangoapp' is not available on your system. Check to see that MangoHud is installed.\n" $0
-    printf "[%s] [Info] Continuing without the '--mangoapp' flag.\n" $0
+    printf "[%s] [Info] 'mangoapp' is not available on your system. Check to see that MangoHud is installed.\n" "$0"
+    printf "[%s] [Info] Continuing without the '--mangoapp' flag.\n" "$0"
 fi
 
 gamescope \
