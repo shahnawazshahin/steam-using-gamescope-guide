@@ -14,7 +14,7 @@ USR_BIN_DIR="/usr/bin"
 WAYLAND_SESSIONS_DIR="/usr/share/wayland-sessions"
 
 # Get the username
-USERNAME=$(logname 2>/dev/null || echo $SUDO_USER || echo $USER)
+USERNAME=$(logname 2>/dev/null || echo "$SUDO_USER" || echo "$USER")
 
 # Ensure the scripts have the correct permissions set
 #
@@ -82,113 +82,23 @@ sudo cp .$USR_BIN_DIR/$STEAMOS_POLKIT_HELPERS_DIR/steamos-set-timezone \
 sudo cp .$WAYLAND_SESSIONS_DIR/steam.desktop \
     $WAYLAND_SESSIONS_DIR/steam.desktop
 
+# Copy the steamos-autologin script to /usr/bin if it exists
+if [ -f ./steamos-autologin ]; then
+    echo "Installing steamos-autologin utility..."
+    sudo cp ./steamos-autologin $USR_BIN_DIR/steamos-autologin
+    sudo chmod 755 $USR_BIN_DIR/steamos-autologin
+fi
+
 # Ask user about autologin configuration
 echo
 read -p "Do you want to enable autologin to the Steam gamescope session? (y/N) " -r
 if [[ "$REPLY" =~ ^[Yy]$ ]]; then
-    echo
-    echo "Which display manager are you using?"
-    echo "1) LightDM"
-    echo "2) SDDM"
-    echo "3) GDM/GDM3"
-    echo "4) I don't know / Skip autologin"
-    echo
-    read -p "Enter your choice (1-4): " DM_CHOICE
-    
-    case "$DM_CHOICE" in
-        1)
-            echo "Configuring LightDM autologin for user: $USERNAME"
-            
-            # Backup and configure LightDM
-            if [ -f /etc/lightdm/lightdm.conf ]; then
-                cp /etc/lightdm/lightdm.conf /etc/lightdm/lightdm.conf.backup.$(date +%Y%m%d_%H%M%S)
-            fi
-            
-            mkdir -p /etc/lightdm/lightdm.conf.d/
-            cat > /etc/lightdm/lightdm.conf.d/50-gamescope-autologin.conf <<EOF
-[Seat:*]
-autologin-user=$USERNAME
-autologin-session=steam
-autologin-user-timeout=0
-EOF
-            
-            # Add user to autologin group if it exists
-            if getent group autologin > /dev/null 2>&1; then
-                usermod -a -G autologin $USERNAME
-            fi
-            
-            echo "LightDM autologin configured!"
-            ;;
-            
-        2)
-            echo "Configuring SDDM autologin for user: $USERNAME"
-            
-            # Backup and configure SDDM
-            mkdir -p /etc/sddm.conf.d/
-            cat > /etc/sddm.conf.d/autologin.conf <<EOF
-[Autologin]
-User=$USERNAME
-Session=steam
-Relogin=false
-
-[General]
-DisplayServer=wayland
-EOF
-            
-            echo "SDDM autologin configured!"
-            ;;
-            
-        3)
-            echo "Configuring GDM autologin for user: $USERNAME"
-            
-            # Find GDM config path
-            if [ -f /etc/gdm3/custom.conf ]; then
-                GDM_CONF="/etc/gdm3/custom.conf"
-            elif [ -f /etc/gdm/custom.conf ]; then
-                GDM_CONF="/etc/gdm/custom.conf"
-            else
-                echo "Error: Could not find GDM configuration file"
-                echo "Skipping autologin configuration"
-                GDM_CONF=""
-            fi
-            
-            if [ -n "$GDM_CONF" ]; then
-                # Backup existing config
-                cp "$GDM_CONF" "${GDM_CONF}.backup.$(date +%Y%m%d_%H%M%S)"
-                
-                # Update or add autologin settings
-                if grep -q "^\[daemon\]" "$GDM_CONF"; then
-                    # Section exists, update it
-                    sed -i '/^\[daemon\]/,/^\[/ {
-                        s/^AutomaticLoginEnable=.*/AutomaticLoginEnable=true/
-                        s/^AutomaticLogin=.*/AutomaticLogin='$USERNAME'/
-                    }' "$GDM_CONF"
-                    
-                    # Add lines if they don't exist
-                    if ! grep -q "^AutomaticLoginEnable=" "$GDM_CONF"; then
-                        sed -i "/^\[daemon\]/a AutomaticLoginEnable=true" "$GDM_CONF"
-                    fi
-                    if ! grep -q "^AutomaticLogin=" "$GDM_CONF"; then
-                        sed -i "/^\[daemon\]/a AutomaticLogin=$USERNAME" "$GDM_CONF"
-                    fi
-                else
-                    # Section doesn't exist, add it
-                    echo "" >> "$GDM_CONF"
-                    echo "[daemon]" >> "$GDM_CONF"
-                    echo "AutomaticLoginEnable=true" >> "$GDM_CONF"
-                    echo "AutomaticLogin=$USERNAME" >> "$GDM_CONF"
-                fi
-                
-                echo "GDM autologin configured!"
-            fi
-            ;;
-            
-        *)
-            echo "Skipping autologin configuration."
-            ;;
-    esac
-    
-    if [[ "$DM_CHOICE" =~ ^[1-3]$ ]]; then
+    # Use the new steamos-autologin script if available
+    if [ -f $USR_BIN_DIR/steamos-autologin ]; then
+        echo
+        echo "Enabling autologin for user: $USERNAME"
+        sudo $USR_BIN_DIR/steamos-autologin enable "$USERNAME"
+        
         echo
         echo "Installation complete with autologin enabled!"
         echo "You can now:"
@@ -201,6 +111,127 @@ EOF
             echo "Rebooting..."
             sleep 2
             reboot
+        fi
+    else
+        # Fallback to manual configuration if script is not available
+        echo
+        echo "Which display manager are you using?"
+        echo "1) LightDM"
+        echo "2) SDDM"
+        echo "3) GDM/GDM3"
+        echo "4) I don't know / Skip autologin"
+        echo
+        read -r -p "Enter your choice (1-4): " DM_CHOICE
+        
+        case "$DM_CHOICE" in
+            1)
+                echo "Configuring LightDM autologin for user: $USERNAME"
+                
+                # Backup and configure LightDM
+                if [ -f /etc/lightdm/lightdm.conf ]; then
+                    cp /etc/lightdm/lightdm.conf "/etc/lightdm/lightdm.conf.backup.$(date +%Y%m%d_%H%M%S)"
+                fi
+                
+                mkdir -p /etc/lightdm/lightdm.conf.d/
+                cat > /etc/lightdm/lightdm.conf.d/50-gamescope-autologin.conf <<EOF
+[Seat:*]
+autologin-user=$USERNAME
+autologin-session=steam
+autologin-user-timeout=0
+EOF
+                
+                # Add user to autologin group if it exists
+                if getent group autologin > /dev/null 2>&1; then
+                    usermod -a -G autologin "$USERNAME"
+                fi
+                
+                echo "LightDM autologin configured!"
+                ;;
+                
+            2)
+                echo "Configuring SDDM autologin for user: $USERNAME"
+                
+                # Backup and configure SDDM
+                mkdir -p /etc/sddm.conf.d/
+                cat > /etc/sddm.conf.d/autologin.conf <<EOF
+[Autologin]
+User=$USERNAME
+Session=steam
+Relogin=false
+
+[General]
+DisplayServer=wayland
+EOF
+                
+                echo "SDDM autologin configured!"
+                ;;
+                
+            3)
+                echo "Configuring GDM autologin for user: $USERNAME"
+                
+                # Find GDM config path
+                if [ -f /etc/gdm3/custom.conf ]; then
+                    GDM_CONF="/etc/gdm3/custom.conf"
+                elif [ -f /etc/gdm/custom.conf ]; then
+                    GDM_CONF="/etc/gdm/custom.conf"
+                else
+                    echo "Error: Could not find GDM configuration file"
+                    echo "Skipping autologin configuration"
+                    GDM_CONF=""
+                fi
+                
+                if [ -n "$GDM_CONF" ]; then
+                    # Backup existing config
+                    cp "$GDM_CONF" "${GDM_CONF}.backup.$(date +%Y%m%d_%H%M%S)"
+                    
+                    # Update or add autologin settings
+                    if grep -q "^\[daemon\]" "$GDM_CONF"; then
+                        # Section exists, update it
+                        sed -i '/^\[daemon\]/,/^\[/ {
+                            s/^AutomaticLoginEnable=.*/AutomaticLoginEnable=true/
+                            s/^AutomaticLogin=.*/AutomaticLogin='"$USERNAME"'/
+                        }' "$GDM_CONF"
+                        
+                        # Add lines if they don't exist
+                        if ! grep -q "^AutomaticLoginEnable=" "$GDM_CONF"; then
+                            sed -i "/^\[daemon\]/a AutomaticLoginEnable=true" "$GDM_CONF"
+                        fi
+                        if ! grep -q "^AutomaticLogin=" "$GDM_CONF"; then
+                            sed -i "/^\[daemon\]/a AutomaticLogin=$USERNAME" "$GDM_CONF"
+                        fi
+                    else
+                        # Section doesn't exist, add it
+                        {
+                            echo ""
+                            echo "[daemon]"
+                            echo "AutomaticLoginEnable=true"
+                            echo "AutomaticLogin=$USERNAME"
+                        } >> "$GDM_CONF"
+                    fi
+                    
+                    echo "GDM autologin configured!"
+                fi
+                ;;
+                
+            *)
+                echo "Skipping autologin configuration."
+                ;;
+        esac
+        
+        if [[ "$DM_CHOICE" =~ ^[1-3]$ ]]; then
+            echo
+            echo "Installation complete with autologin enabled!"
+            echo "You can now:"
+            echo "1. Reboot your system to automatically start in gaming mode"
+            echo "   OR"
+            echo "2. Log out and select 'Steam (gamescope)' from your display manager"
+            echo
+            read -p "Would you like to reboot now? (y/n): " -r
+            if [[ "$REPLY" =~ ^[Yy]$ ]]; then
+                echo "Rebooting..."
+                sleep 2
+                reboot
+            fi
         fi
     fi
 else
