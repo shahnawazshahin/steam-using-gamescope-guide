@@ -41,6 +41,9 @@ sudo rm $USR_BIN_DIR/$STEAMOS_POLKIT_HELPERS_DIR/steamos-set-timezone
 # 'steam.desktop'
 sudo rm $WAYLAND_SESSIONS_DIR/steam.desktop 
 
+# 'steam-seamless.desktop'
+sudo rm $WAYLAND_SESSIONS_DIR/steam-seamless.desktop 
+
 
 # Remove the 'steamos-polkit-helpers' folder under '/usr/bin'
 sudo rm -rf $USR_BIN_DIR/$STEAMOS_POLKIT_HELPERS_DIR

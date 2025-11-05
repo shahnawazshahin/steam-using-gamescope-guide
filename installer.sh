@@ -20,6 +20,9 @@ WAYLAND_SESSIONS_DIR="/usr/share/wayland-sessions"
 # 'gamescope-session'
 chmod $SCRIPT_PERMISSIONS .$USR_BIN_DIR/gamescope-session
 
+# 'gamescope-session-manager'
+chmod $SCRIPT_PERMISSIONS .$USR_BIN_DIR/gamescope-session-manager
+
 # 'jupiter-biosupdate'
 chmod $SCRIPT_PERMISSIONS .$USR_BIN_DIR/jupiter-biosupdate
 chmod $SCRIPT_PERMISSIONS .$USR_BIN_DIR/$STEAMOS_POLKIT_HELPERS_DIR/jupiter-biosupdate
@@ -53,6 +56,10 @@ sudo mkdir $USR_BIN_DIR/$STEAMOS_POLKIT_HELPERS_DIR
 sudo cp .$USR_BIN_DIR/gamescope-session \
     $USR_BIN_DIR/gamescope-session
 
+# 'gamescope-session-manager'
+sudo cp .$USR_BIN_DIR/gamescope-session-manager \
+    $USR_BIN_DIR/gamescope-session-manager
+
 # 'jupiter-biosupdate'
 sudo cp .$USR_BIN_DIR/jupiter-biosupdate \
     $USR_BIN_DIR/jupiter-biosupdate
@@ -83,3 +90,7 @@ sudo cp .$USR_BIN_DIR/$STEAMOS_POLKIT_HELPERS_DIR/steamos-set-timezone \
 # 'steam.desktop'
 sudo cp .$WAYLAND_SESSIONS_DIR/steam.desktop \
     $WAYLAND_SESSIONS_DIR/steam.desktop
+
+# 'steam-seamless.desktop'
+sudo cp .$WAYLAND_SESSIONS_DIR/steam-seamless.desktop \
+    $WAYLAND_SESSIONS_DIR/steam-seamless.desktop

@@ -170,6 +170,16 @@ Alternatively, manually set the correct permissions and copy each helper script 
   cp ./usr/bin/gamescope-session /usr/bin/gamescope-session
   ```
 
+* `gamescope-session-manager`:
+
+  ```bash
+  chmod 755 ./usr/bin/gamescope-session-manager
+  ```
+
+  ```bash
+  cp ./usr/bin/gamescope-session-manager /usr/bin/gamescope-session-manager
+  ```
+
 * `jupiter-biosupdate`:
 
   ```bash
@@ -246,6 +256,15 @@ Alternatively, manually set the correct permissions and copy each helper script 
   cp ./usr/share/wayland-sessions/steam.desktop /usr/share/wayland-sessions/steam.desktop
   ```
 
+* `steam-seamless.desktop`:
+
+  ```bash
+  chmod 644 ./usr/share/wayland-sessions/steam-seamless.desktop
+  ```
+
+  ```bash
+  cp ./usr/share/wayland-sessions/steam-seamless.desktop /usr/share/wayland-sessions/steam-seamless.desktop
+  ```
 
 #### 4. Launch SteamOS mode and run through SteamOS mode set up
 
@@ -306,6 +325,12 @@ It is possible to set up automatic updates depending on the Linux distribution t
 
 [TODO]
 
+### How do I enable a seamless switch between SteamOS mode and the desktop (similar to the Steam Deck)
+
+For a detailed guide on how this works, please refer to the [Seamless Switch to Desktop](https://github.com/shahnawazshahin/steam-using-gamescope-guide/blob/main/docs/SEAMLESS-SWITCH-TO-DESKTOP.md) section.
+
+However, if you plan to enable autologin that will be shared by multiple users, make sure to create a separate, standard Linux user account (e.g., creating a `steam` user account) on your system. This is necessary if you intend not to share any personal data or account with others using the system.
+
 ### I want to remove the changes made to my Linux install to launch into SteamOS mode. How do I do this?
 
 The simple approach is to open a terminal within the unpacked folder (or repository) and run the `uninstaller.sh` script.
@@ -316,6 +341,12 @@ Alternatively, manually remove the scripts and the `steamos-polkit-helpers` fold
 
   ```bash
   rm /usr/bin/gamescope-session
+  ```
+
+* `gamescope-session-manager`:
+
+  ```bash
+  rm /usr/bin/gamescope-session-manager
   ```
 
 * `jupiter-biosupdate`:
@@ -389,11 +420,13 @@ After that, remove the `mangohud` and `gamescope` packages:
   dnf remove mangohud
   ```
 
-### I'm interested in understanding more about these script files. What do each of these script files do?
+### I'm interested in understanding more about these script files. What does each of these script files do?
 
 Details of each helper script include:
 
 * `usr/bin/gamescope-session`: A script that launches the Steam client into SteamOS mode using Gamescope.
+
+* `usr/bin/gamescope-session-manager`: A script that launches the Steam client into SteamOS mode using Gamescope, with extended capabilities to seamlessly switch between SteamOS mode and the desktop.
 
 * `usr/bin/jupiter-biosupdate`: A dummy script that informs the Steam client of no bios updates as they`re only relevant for the Steam Deck and other SteamOS-compatible devices.
 
@@ -410,3 +443,5 @@ Details of each helper script include:
 * `usr/bin/steamos-polkit-helpers/steamos-update`: A dummy helper script that calls the `/usr/bin/steamos-update` script. Steam client for Linux expects this script available in the `steamos-polkit-helpers` subfolder.
 
 * `usr/share/wayland-sessions/steam.desktop`: A file that adds an option to the display manager (e.g., SDDM, GDM) that you can select and log into SteamOS mode. This calls the `/usr/bin/gamescope-session` script.
+
+* `usr/share/wayland-sessions/steam-seamless.desktop`: Another file that adds an option to the display manager, but insteam calls the `/usr/bin/gamescope-session-manager` script.

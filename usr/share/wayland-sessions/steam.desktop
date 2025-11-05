@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
-Name=Steam (Gamescope)
-Comment=Run Steam directly in Gamescope
+Name=SteamOS mode (Gamescope)
+Comment=Run SteamOS mode using Gamescope
 Exec=gamescope-session
 Type=Application
 DesktopNames=gamescope
