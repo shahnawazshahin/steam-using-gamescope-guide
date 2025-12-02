@@ -72,6 +72,11 @@ function check_dependencies() {
             printf >&2 "[%s] [Error] A separate '%s' Linux user account is required on this system.\n" "$0" "$STEAM_LOCAL_USERNAME"
             exit
         }
+
+        if [[ "$USER" != "$STEAM_LOCAL_USERNAME" ]]
+        then
+            printf "[%s] [Error] Need to run as '%s'.\n" "$0" "$STEAM_LOCAL_USERNAME"
+        fi
     fi
 
     # Identify paths of each dependency
@@ -145,9 +150,7 @@ function launch_desktop() {
 
 # Launch Steam in SteamOS mode
 function launch_steam() {
-    "$GAMESCOPE_CMD" \
-        "$MANGOAPP_FLAG" \
-        -e -- "$STEAM_CMD" -steamdeck -steamos3
+    "$GAMESCOPE_CMD""$MANGOAPP_FLAG" -e -- "$STEAM_CMD" -steamdeck -steamos3
 }
 
 
