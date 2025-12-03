@@ -12,6 +12,8 @@ SCRIPT_PERMISSIONS="755"
 SESSION_FILE_PERMISSIONS="644"
 STEAMOS_POLKIT_HELPERS_DIR="steamos-polkit-helpers"
 USR_BIN_DIR="/usr/bin"
+STEAM_USING_GAMESCOPE_DIR="steam-using-gamescope"
+USR_LIB_DIR="/usr/lib"
 WAYLAND_SESSIONS_DIR="/usr/share/wayland-sessions"
 
 
@@ -39,6 +41,9 @@ chmod $SCRIPT_PERMISSIONS .$USR_BIN_DIR/$STEAMOS_POLKIT_HELPERS_DIR/steamos-upda
 
 # 'steamos-set-timezone'
 chmod $SCRIPT_PERMISSIONS .$USR_BIN_DIR/$STEAMOS_POLKIT_HELPERS_DIR/steamos-set-timezone
+
+# 'gamescope-session-helper'
+chmod $SCRIPT_PERMISSIONS .$USR_LIB_DIR/$STEAM_USING_GAMESCOPE_DIR/gamescope-session-helper
 
 # Ensure the session file has the correct permissions set
 #
@@ -83,6 +88,10 @@ sudo cp .$USR_BIN_DIR/$STEAMOS_POLKIT_HELPERS_DIR/steamos-update \
 # 'steamos-set-timezone'
 sudo cp .$USR_BIN_DIR/$STEAMOS_POLKIT_HELPERS_DIR/steamos-set-timezone \
     $USR_BIN_DIR/$STEAMOS_POLKIT_HELPERS_DIR/steamos-set-timezone
+
+# 'gamescope-session-helper'
+sudo cp .$USR_LIB_DIR/$STEAM_USING_GAMESCOPE_DIR/gamescope-session-helper \
+    $USR_LIB_DIR/$STEAM_USING_GAMESCOPE_DIR/gamescope-session-helper
 
 
 # Copy the following scripts to the /usr/share folder

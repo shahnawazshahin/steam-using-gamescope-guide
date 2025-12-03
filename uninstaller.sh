@@ -10,6 +10,8 @@ fi
 # Set up variables for this script
 STEAMOS_POLKIT_HELPERS_DIR="steamos-polkit-helpers"
 USR_BIN_DIR="/usr/bin"
+STEAM_USING_GAMESCOPE_DIR="steam-using-gamescope"
+USR_LIB_DIR="/usr/lib"
 WAYLAND_SESSIONS_DIR="/usr/share/wayland-sessions"
 
 
@@ -37,6 +39,9 @@ sudo rm $USR_BIN_DIR/$STEAMOS_POLKIT_HELPERS_DIR/steamos-update
 
 # 'steamos-set-timezone'
 sudo rm $USR_BIN_DIR/$STEAMOS_POLKIT_HELPERS_DIR/steamos-set-timezone
+
+# 'gamescope-session-helper'
+sudo rm $USR_LIB_DIR/$STEAM_USING_GAMESCOPE_DIR/gamescope-session-helper
 
 
 # Remove the following scripts to the /usr/share folder
