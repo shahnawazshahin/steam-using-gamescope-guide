@@ -18,6 +18,9 @@ WAYLAND_SESSIONS_DIR="/usr/share/wayland-sessions"
 # 'gamescope-session'
 sudo rm $USR_BIN_DIR/gamescope-session
 
+# 'gamescope-session-manager'
+sudo rm $USR_BIN_DIR/gamescope-session-manager
+
 # 'jupiter-biosupdate'
 sudo rm $USR_BIN_DIR/jupiter-biosupdate
 sudo rm $USR_BIN_DIR/$STEAMOS_POLKIT_HELPERS_DIR/jupiter-biosupdate

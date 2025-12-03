@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# Exit immediately on error and throw an error
-# when using undefined variables
-set -eu
-
 STEAM_LOCAL_USERNAME="steam"
 
 # Print usage
@@ -150,9 +146,11 @@ function launch_desktop() {
 
 # Launch Steam in SteamOS mode
 function launch_steam() {
-    "$GAMESCOPE_CMD""$MANGOAPP_FLAG" -e -- "$STEAM_CMD" -steamdeck -steamos3
+    "$GAMESCOPE_CMD" "$MANGOAPP_FLAG" -e -- "$STEAM_CMD" -steamdeck -steamos3
 }
 
+
+# Start 
 
 # First check the arguments.
 check_args "$@"
@@ -177,3 +175,5 @@ while true; do
         break
     fi
 done
+
+# End
