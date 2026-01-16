@@ -1,19 +1,31 @@
-#!/bin/bash
-
-# Assume that MangoHud is not installed
 MANGOAPP_FLAG=""
-
-# Check that mangoapp is available. Set the flag if it exists,
-# otherwise inform to check that MangoHud is installed and
-# proceed without the flag.
-if command -v mangoapp &> /dev/null;
-then
-    MANGOAPP_FLAG="--mangoapp"
+if command -v mangoapp &>/dev/null; then
+  MANGOAPP_FLAG="--mangoapp"
 else
-    printf "[%s] [Info] 'mangoapp' is not available on your system. Check to see that MangoHud is installed.\n" "$0"
-    printf "[%s] [Info] Continuing without the '--mangoapp' flag.\n" "$0"
+  printf "[%s] [Info] 'mangoapp' not found, continuing without it.\n" "$0"
 fi
 
+# Detect monitor resolution(primary) using xrandr
+MONITOR_RES=$(xrandr | grep " connected primary" | awk '{print $4}' | cut -d'+' -f1)
+
+# Fallback if primary not found
+if [ -z "$MONITOR_RES" ]; then
+  MONITOR_RES=$(xrandr | grep " connected" | head -n1 | awk '{print $3}' | cut -d'+' -f1)
+fi
+
+# Extract width and height
+OUTPUT_W=$(echo $MONITOR_RES | cut -d'x' -f1)
+OUTPUT_H=$(echo $MONITOR_RES | cut -d'x' -f2)
+
+# Set internal game resolution = output resolution
+INTERNAL_W=$OUTPUT_W
+INTERNAL_H=$OUTPUT_H
+
+printf "[%s] [Info] Launching on monitor with resolution %sx%s\n" "$0" "$OUTPUT_W" "$OUTPUT_H"
+
+# Launch Gamescope
 gamescope \
-    $MANGOAPP_FLAG \
-    -e -- steam -steamdeck -steamos3
+  -W $INTERNAL_W -H $INTERNAL_H \
+  -w $OUTPUT_W -h $OUTPUT_H \
+  -f \
+  --scaler integer \
