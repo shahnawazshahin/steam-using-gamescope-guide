@@ -54,6 +54,9 @@ chmod $SESSION_FILE_PERMISSIONS .$WAYLAND_SESSIONS_DIR/steam.desktop
 # Create a 'steamos-polkit-helpers' folder under '/usr/bin'
 sudo mkdir $USR_BIN_DIR/$STEAMOS_POLKIT_HELPERS_DIR
 
+# Create a 'steam-using-gamescope' folder under '/usr/lib'
+sudo mkdir $USR_LIB_DIR/$STEAM_USING_GAMESCOPE_DIR
+
 
 # Copy the following scripts to the /usr/bin folder
 #

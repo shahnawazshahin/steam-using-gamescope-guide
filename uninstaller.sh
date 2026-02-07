@@ -55,3 +55,6 @@ sudo rm $WAYLAND_SESSIONS_DIR/steam-seamless.desktop
 
 # Remove the 'steamos-polkit-helpers' folder under '/usr/bin'
 sudo rm -rf $USR_BIN_DIR/$STEAMOS_POLKIT_HELPERS_DIR
+
+# Remove the 'steam-using-gamescope' folder under '/usr/lib'
+sudo rm -rf $USR_LIB_DIR/$STEAM_USING_GAMESCOPE_DIR
