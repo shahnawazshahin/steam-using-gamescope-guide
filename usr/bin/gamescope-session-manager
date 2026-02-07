@@ -1,0 +1,113 @@
+#!/bin/bash
+
+STEAM_LOCAL_USERNAME="steam"
+
+# Print usage
+function usage() {
+    printf "Usage: %s [options] [cinnamon|gnome|gnome-classic|hyprland|plasma-wayland|ubuntu]\n\n" "$0"
+    printf "Options:\n"
+    printf "   -h | --help   Show this help message\n"
+    printf "   -l | --loop   Loop back to SteamOS mode\n"
+    printf "   -s | --skip-local-username-check   Skip %s local user account check\n" "$STEAM_LOCAL_USERNAME"
+}
+
+# Check for command line arguments.
+function check_args() {
+    for arg in "$@"; do
+        case $arg in
+            # Check if help is requested then exit
+            -h|--help)
+            usage
+            exit
+            ;;
+            # If loop option is specified enable continuous loop
+            -l|--loop)
+            enable_loop
+            shift
+            ;;
+            # If skip-local-username-check option is specified set enable skip
+            -s|--skip-local-username-check)
+            disable_check_local_username
+            shift
+            ;;
+            # Set the desktop to launch from the available options
+            cinnamon|gnome|gnome-classic|hyprland|plasma-wayland|ubuntu)
+            set_desktop "$arg"
+            shift
+            ;;
+            *)
+            printf "%s: invalid argument: %s\n" "$0" "$arg"
+            printf "See --help for a list of arguments.\n"
+            exit
+            ;;
+        esac
+    done
+}
+
+# Reference to 'gamescope-session-helper' to check for additional functions
+# shellcheck source=/dev/null
+. /usr/lib/steam-using-gamescope/gamescope-session-helper
+
+# Assume the loop will only run once.
+RUN_ONCE=true
+
+# Enable continuous loop
+function enable_loop() {
+    RUN_ONCE=false
+}
+
+# Assume no desktop environment specified
+DESKTOP=""
+
+# Set the desktop to launch
+function set_desktop() {
+    DESKTOP="$1"
+}
+
+# Launch the desktop based on the desktop environment set
+function launch_desktop() {
+    # More desktop environment options can be added here and include in the check_args() function
+    case "$DESKTOP" in
+        cinnamon) [[ -n "$(command -v cinnamon-session)" ]] && "$(command -v cinnamon-session)" || printf "[%s] [Info] Cinnamon not installed.\n" "$0" ;;
+        gnome) [[ -n "$(command -v gnome-session)" ]] && "$(command -v gnome-session)" || printf "[%s] [Info] Gnome not installed.\n" "$0" ;;
+        gnome-classic) [[ -n "$(command -v gnome-session)" ]] && env GNOME_SHELL_SESSION_MODE=classic "$(command -v gnome-session)" || printf "[%s] [Info] Gnome not installed.\n" "$0" ;;
+        hyprland) [[ -n "$(command -v Hyprland)" ]] && "$(command -v Hyprland)" || printf "[%s] [Info] Hyprland not installed.\n" "$0" ;;
+        plasma-wayland) [[ -n "$(command -v startplasma-wayland)" ]] && "$(locate plasma-dbus-run-session-if-needed)" "$(command -v startplasma-wayland)" || printf "[%s] [Info] Plasma Wayland not installed.\n" "$0" ;;
+        ubuntu) [[ -n "$(command -v gnome-session)" ]] && env GNOME_SHELL_SESSION_MODE=ubuntu "$(command -v gnome-session)" --session=ubuntu || printf "[%s] [Info] Ubuntu desktop not available.\n" "$0" ;;
+        *) printf "[%s] [Info] Unknown session.\n" "$0"; exit;
+    esac
+}
+
+# Launch Steam in SteamOS mode
+function launch_steam() {
+    "$GAMESCOPE_CMD" "$MANGOAPP_FLAG" -e -- "$STEAM_CMD" -steamdeck -steamos3
+}
+
+
+# Start 
+
+# First check the arguments.
+check_args "$@"
+
+# Then check for dependencies.
+check_dependencies
+
+# Now run loop.
+while true; do
+    # Launch Steam
+    launch_steam
+
+    # If the desktop environment is specified, launch the desktop.
+    if [[ -n "$DESKTOP" ]]
+    then
+        launch_desktop
+    fi
+
+    # If this loop is to only run once, then break loop.
+    if "$RUN_ONCE"
+    then
+        break
+    fi
+done
+
+# End

@@ -1,0 +1,73 @@
+#!/bin/bash
+
+# Set flag to check username
+CHECK_LOCAL_USERNAME_FLAG=true
+
+# Disable username check by setting the flag to false
+function disable_check_local_username() {
+    CHECK_LOCAL_USERNAME_FLAG=false
+}
+
+# Assume that dependencies are not installed
+LOCATE_CMD=""
+STEAM_CMD=""
+GAMESCOPE_CMD=""
+MANGOAPP_CMD=""
+
+# Assume that MangoHud is not installed.
+MANGOAPP_FLAG=""
+
+function check_dependencies() {
+    # Check if the local account is set up on the system, otherwise exit (or skip if not required)
+    if "$CHECK_LOCAL_USERNAME_FLAG"
+    then
+        getent passwd "$STEAM_LOCAL_USERNAME" > /dev/null 2>&1 || {
+            printf >&2 "[%s] [Error] A separate '%s' Linux user account is required on this system.\n" "$0" "$STEAM_LOCAL_USERNAME"
+            exit
+        }
+
+        if [[ "$USER" != "$STEAM_LOCAL_USERNAME" ]]
+        then
+            printf "[%s] [Error] Need to run as '%s'.\n" "$0" "$STEAM_LOCAL_USERNAME"
+        fi
+    fi
+
+    # Identify paths of each dependency
+    LOCATE_CMD="$(command -v locate)"
+    STEAM_CMD="$(command -v steam)"
+    GAMESCOPE_CMD="$(command -v gamescope)"
+    MANGOAPP_CMD="$(command -v mangoapp)"
+
+    # Check if `locate` dependency is available, otherwise halt
+    if [[ -z "$LOCATE_CMD" ]]
+    then
+        printf "[%s] [Error] 'locate' is not installed. Please install 'plocate' before proceeding.\n" "$0"
+        exit
+    fi
+
+    # Check if `steam` dependency is available, otherwise halt
+    if [[ -z "$STEAM_CMD" ]]
+    then
+        printf "[%s] [Error] 'steam' is not installed. Please install before proceeding.\n" "$0"
+        exit
+    fi
+
+    # Check if `gamescope` dependency is available, otherwise halt
+    if [[ -z "$GAMESCOPE_CMD" ]]
+    then
+        printf "[%s] [Error] 'gamescope' is not installed. Please install before proceeding.\n" "$0"
+        exit
+    fi
+
+    # For MangoApp, if it exists then set the MANGOAPP_FLAG
+    if [[ -z "$MANGOAPP_CMD" ]]
+    then
+        printf "[%s] [Info] 'mangoapp' is not available on your system. Check to see that MangoHud is installed.\n" "$0"
+        printf "[%s] [Info] Continuing without the '--mangoapp' flag.\n" "$0"
+    else
+        # shellcheck disable=SC2034
+        MANGOAPP_FLAG="--mangoapp" 
+    fi
+
+    printf "[%s] [Info] All dependencies are installed.\n" "$0"
+}

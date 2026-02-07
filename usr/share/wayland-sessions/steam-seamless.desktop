@@ -1,0 +1,7 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=SteamOS seamless mode (Gamescope)
+Comment=Run SteamOS mode using Gamescope with seamless desktop switching 
+Exec=gamescope-session-manager -l plasma-wayland
+Type=Application
+DesktopNames=gamescope

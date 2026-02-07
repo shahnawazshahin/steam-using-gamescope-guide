@@ -12,6 +12,8 @@ SCRIPT_PERMISSIONS="755"
 SESSION_FILE_PERMISSIONS="644"
 STEAMOS_POLKIT_HELPERS_DIR="steamos-polkit-helpers"
 USR_BIN_DIR="/usr/bin"
+STEAM_USING_GAMESCOPE_DIR="steam-using-gamescope"
+USR_LIB_DIR="/usr/lib"
 WAYLAND_SESSIONS_DIR="/usr/share/wayland-sessions"
 
 
@@ -19,6 +21,9 @@ WAYLAND_SESSIONS_DIR="/usr/share/wayland-sessions"
 #
 # 'gamescope-session'
 chmod $SCRIPT_PERMISSIONS .$USR_BIN_DIR/gamescope-session
+
+# 'gamescope-session-manager'
+chmod $SCRIPT_PERMISSIONS .$USR_BIN_DIR/gamescope-session-manager
 
 # 'jupiter-biosupdate'
 chmod $SCRIPT_PERMISSIONS .$USR_BIN_DIR/jupiter-biosupdate
@@ -37,6 +42,9 @@ chmod $SCRIPT_PERMISSIONS .$USR_BIN_DIR/$STEAMOS_POLKIT_HELPERS_DIR/steamos-upda
 # 'steamos-set-timezone'
 chmod $SCRIPT_PERMISSIONS .$USR_BIN_DIR/$STEAMOS_POLKIT_HELPERS_DIR/steamos-set-timezone
 
+# 'gamescope-session-helper'
+chmod $SCRIPT_PERMISSIONS .$USR_LIB_DIR/$STEAM_USING_GAMESCOPE_DIR/gamescope-session-helper
+
 # Ensure the session file has the correct permissions set
 #
 # 'steam.desktop'
@@ -46,12 +54,19 @@ chmod $SESSION_FILE_PERMISSIONS .$WAYLAND_SESSIONS_DIR/steam.desktop
 # Create a 'steamos-polkit-helpers' folder under '/usr/bin'
 sudo mkdir $USR_BIN_DIR/$STEAMOS_POLKIT_HELPERS_DIR
 
+# Create a 'steam-using-gamescope' folder under '/usr/lib'
+sudo mkdir $USR_LIB_DIR/$STEAM_USING_GAMESCOPE_DIR
+
 
 # Copy the following scripts to the /usr/bin folder
 #
 # 'gamescope-session'
 sudo cp .$USR_BIN_DIR/gamescope-session \
     $USR_BIN_DIR/gamescope-session
+
+# 'gamescope-session-manager'
+sudo cp .$USR_BIN_DIR/gamescope-session-manager \
+    $USR_BIN_DIR/gamescope-session-manager
 
 # 'jupiter-biosupdate'
 sudo cp .$USR_BIN_DIR/jupiter-biosupdate \
@@ -77,9 +92,17 @@ sudo cp .$USR_BIN_DIR/$STEAMOS_POLKIT_HELPERS_DIR/steamos-update \
 sudo cp .$USR_BIN_DIR/$STEAMOS_POLKIT_HELPERS_DIR/steamos-set-timezone \
     $USR_BIN_DIR/$STEAMOS_POLKIT_HELPERS_DIR/steamos-set-timezone
 
+# 'gamescope-session-helper'
+sudo cp .$USR_LIB_DIR/$STEAM_USING_GAMESCOPE_DIR/gamescope-session-helper \
+    $USR_LIB_DIR/$STEAM_USING_GAMESCOPE_DIR/gamescope-session-helper
+
 
 # Copy the following scripts to the /usr/share folder
 #
 # 'steam.desktop'
 sudo cp .$WAYLAND_SESSIONS_DIR/steam.desktop \
     $WAYLAND_SESSIONS_DIR/steam.desktop
+
+# 'steam-seamless.desktop'
+sudo cp .$WAYLAND_SESSIONS_DIR/steam-seamless.desktop \
+    $WAYLAND_SESSIONS_DIR/steam-seamless.desktop
