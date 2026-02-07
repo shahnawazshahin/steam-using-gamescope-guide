@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# If required, setting this variable will enable additional
+# options under settings in SteamOS mode, including the option 
+# to 'Automatically Set Resolution' option, which can be turned
+# off to set the resolution manually.
+#export GAMESCOPE_MODE_SAVE_FILE="$HOME/.config/gamescope/modes.cfg"
+
 # Assume that MangoHud is not installed
 MANGOAPP_FLAG=""
 
