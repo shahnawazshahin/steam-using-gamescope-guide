@@ -193,34 +193,48 @@ The script will also check to if `MangoApp` is on the system and use it if avail
 
 * Create a `Developer` folder in your `HOME` location using a file manager or from the command line as follows
 
-  > `mkdir ~/Developer`
+  ```bash
+  mkdir ~/Developer
+  ```
 
 * Using the code editor, create a new file called `gamescope-session` in the `Developer` folder, add the following lines to the file and then save the file
 
-  > `~/Developer/gamescope-session`
-  >
-  > ---
-  >
-  > `#!/bin/bash`
-  >
-  > `MANGOAPP_OPT=""`
-  >
-  > `if command -v mangoapp &>/dev/null`
-  > `then`
-  >   `MANGOAPP_OPT="--mangoapp"`
-  > `fi`
-  >
-  > `gamescope $MANGOAPP_OPT -e -- steam -steamdeck -steamos3`
+  `~/Developer/gamescope-session`
+  
+  ---
+  
+  ```bash
+  #!/bin/bash
+ 
+  export GAMESCOPE_MODE_SAVE_FILE="$HOME/.config/gamescope/modes.cfg"
+  
+  MANGOAPP_OPT=""
+  
+  if command -v mangoapp &>/dev/null
+  then
+    MANGOAPP_OPT="--mangoapp"
+  fi
+  
+  gamescope $MANGOAPP_OPT -e -- steam -steamdeck -steamos3
+  ```
+
+  > Note: Setting GAMESCOPE_MODE_SAVE_FILE will enable hidden options to appear, including the 'Automatically Set Resolution' option.
 
 * Using the terminal, set the permissions of the file to execute and copy the file to the `/usr/bin/` folder
 
-  > `chmod +x ~/Developer/gamescope-session`
-  >
-  > `sudo cp ~/Developer/gamescope-session /usr/bin/`
+  ```bash
+  chmod +x ~/Developer/gamescope-session
+  ```
+
+  ```bash
+  sudo cp ~/Developer/gamescope-session /usr/bin/
+  ```
 
 * Test the script by running the command from the terminal
 
-  > `gamescope-session`
+  ```bash
+  gamescope-session
+  ```
 
 * SteamOS mode will launch in a window showing the set up screen.
 * Close the window.
@@ -231,14 +245,16 @@ Let's add a configuation file to launch into SteamOS mode from the login screen 
 
 * (If it does not exist already) create a `Developer` folder in your `HOME` location using a file manager or from the command line as follows
 
-  > `mkdir ~/Developer`
+  ```bash
+  mkdir ~/Developer
+  ```
 
 * Using the code editor, create a new file called `steam.desktop` in the `Developer` folder, add the following lines to the file and then save the file
 
   `~/Developer/steam.desktop`
-  >
-  > ---
-  >
+  
+  ---
+  
   ```bash
   [Desktop Entry]
   Encoding=UTF-8
@@ -251,7 +267,9 @@ Let's add a configuation file to launch into SteamOS mode from the login screen 
 
 * From the terminal, copy the `steam.desktop` file into `/usr/share/wayland-sessions/` folder
 
-  > `sudo cp ~/Developer/steam.desktop /usr/share/wayland-sessions/`
+  ```bash
+  sudo cp ~/Developer/steam.desktop /usr/share/wayland-sessions/
+  ```
 
 * Log off from the desktop environment (e.g., KDE Plasma, Gnome).
 * Follow the next steps based on the display manager used:
@@ -273,25 +291,35 @@ In this case, a dummy script will be created that will exit with code 0 back to 
 
 * (If it does not exist already) create a `Developer` folder in your `HOME` location using a file manager or from the command line as follows
 
-  > `mkdir ~/Developer`
+  ```bash
+  mkdir ~/Developer
+  ```
 
 * Using the code editor, create a new file called `steamos-set-timezone` in the `Developer/steamos-polkit-helpers` folder, add the following lines to the file and then save the file
 
-  > `~/Developer/steamos-polkit-helpers/steamos-set-timezone`
-  >
-  > ---
-  >
-  > `#!/bin/bash`
-  >
-  > `exit 0;`
+  `~/Developer/steamos-polkit-helpers/steamos-set-timezone`
+  
+  ---
+  
+  ```bash
+  #!/bin/bash
+  
+  exit 0;
+  ```
 
 * From the terminal, set the permissions of the script with execute, create a `steamos-polkit-helpers` folder under `/usr/bin/` and copy the script
 
-  > `chmod +x ~/Developer/gamescope-session`
+  ```bash
+  chmod +x ~/Developer/gamescope-session
+  ```
 
-  > `sudo mkdir /usr/bin/steamos-polkit-helpers`
+  ```bash
+  sudo mkdir /usr/bin/steamos-polkit-helpers
+  ```
 
-  > `sudo cp ~/Developer/gamescope-session /usr/bin/`
+  ```bash
+  sudo cp ~/Developer/gamescope-session /usr/bin/
+  ```
 
 ### 7. Create a helper script to stop unecessary bios updates in SteamOS mode
 
@@ -305,39 +333,47 @@ In this case, a dummy script will be created that will echo 'no updates configur
 
 * Using the code editor, create a new file called `jupier-biosupdate` in the `Developer` folder, add the following lines to the file and then save the file
 
-  > `~/Developer/jupier-biosupdate`
-  >
-  > ---
-  >
-  > `#!/bin/bash`
-  >
-  > `echo "No updates configured for this bios"`
-  >
-  > `exit 0;`
+  `~/Developer/jupier-biosupdate`
+  
+  ---
+  ```bash
+  #!/bin/bash
+  
+  echo "No updates configured for this bios"
+  
+  exit 0;
+  ```
 
 * This part is optional, but is useful to ensure the right environment is set when running the script to exit immediately on error. Using the code editor, create a new file called `jupier-biosupdate` in the `Developer/steamos-polkit-helpers` folder, add the following lines to the file and then save the file
 
-  > `~/Developer/steamos-polkit-helpers/jupier-biosupdate`
-  >
-  > ---
-  >
-  > `#!/bin/bash`
-  >
-  > `set -eu`
-  >
-  > `exec /usr/bin/jupiter-biosupdate "$0"`
+  `~/Developer/steamos-polkit-helpers/jupier-biosupdate`
+  
+  ---
+  ```bash
+  #!/bin/bash
+  
+  set -eu
+  
+  exec /usr/bin/jupiter-biosupdate "$0"
+  ```
 
 * From the terminal, set the permissions of the scripts with execute, and copy them to the following
 
-  > `chmod +x ~/Developer/gamescope-session`
-
-  > `sudo cp ~/Developer/gamescope-session /usr/bin/`
+  ```bash
+  chmod +x ~/Developer/gamescope-session
+  ```
+  ```bash
+  sudo cp ~/Developer/gamescope-session /usr/bin/
+  ```
 
   Optionally, copy the polkit helper script
 
-  > `chmod +x ~/Developer/steamos-polkit-helpers/jupiter-biosupdate`
-
-  > `sudo cp ~/Developer/steamos-polkit-helpers/jupiter-biosupdate /usr/bin/steamos-polkit-helpers/`
+  ```bash
+  chmod +x ~/Developer/steamos-polkit-helpers/jupiter-biosupdate
+  ```
+  ```bash
+  sudo cp ~/Developer/steamos-polkit-helpers/jupiter-biosupdate /usr/bin/steamos-polkit-helpers/
+  ```
 
 ### 8. Create a helper script to stop unecessary system updates in SteamOS mode
 
@@ -347,41 +383,51 @@ In this case, a dummy script will be created that will exit with code 7 back to 
 
 * (If it does not exist already) create a `Developer` folder in your `HOME` location using a file manager or from the command line as follows
 
-  > `mkdir ~/Developer`
+  ```bash
+  mkdir ~/Developer
+  ```
 
 * Using the code editor, create a new file called `steamos-update` in the `Developer` folder, add the following lines to the file and then save the file
 
-  > `~/Developer/steamos-update`
-  >
-  > ---
-  >
-  > `#!/bin/bash`
-  >
-  > `exit 7;`
+  `~/Developer/steamos-update`
+  
+  ---
+  ```bash
+  #!/bin/bash
+  
+  exit 7;
+  ```
 
 * This part is optional, but a useful helper script can be created to ensure the right environment is set to exit immediately on error. Using the code editor, create a new file called `steamos-update` in the `Developer/steamos-polkit-helpers` folder, add the following lines to the file and then save the file
 
-  > `~/Developer/steamos-polkit-helpers/steamos-update`
-  >
-  > ---
-  >
-  > `#!/bin/bash`
-  >
-  > `set -eu`
-  >
-  > `exec /usr/bin/steamos-update "$0"`
+  `~/Developer/steamos-polkit-helpers/steamos-update`
+  
+  ---
+  ```bash
+  #!/bin/bash
+  
+  set -eu
+  
+  exec /usr/bin/steamos-update "$0"
+  ```
 
 * Uisng the terminal, set the permissions of the scripts with execute and copy them to the following
 
+  ```bash
   > `chmod +x ~/Developer/steamos-update`
-
-  > `sudo cp ~/Developer/steamos-update /usr/bin/`
+  ```
+  ```bash
+  sudo cp ~/Developer/steamos-update /usr/bin/
+  ```
 
   Optionally, copy the polkit helper script
 
-  > `chmod +x ~/Developer/steamos-polkit-helpers/steamos-update`
-
-  > `sudo cp ~/Developer/steamos-polkit-helpers/steamos-update /usr/bin/steamos-polkit-helpers/`
+  ```bash
+  chmod +x ~/Developer/steamos-polkit-helpers/steamos-update
+  ```
+  ```bash
+  sudo cp ~/Developer/steamos-polkit-helpers/steamos-update /usr/bin/steamos-polkit-helpers/
+  ```
 
 ### 9. Create a helper script to set the SteamOS branch required for the Steam Client
 
@@ -391,23 +437,28 @@ In this case, a dummy script will be created that will echo 'Not applicable for 
 
 * (If it does not exist already) create a `Developer` folder in your `HOME` location using a file manager or from the command line as follows
 
-  > `mkdir ~/Developer`
+  ```bash
+  mkdir ~/Developer
+  ```
 
 * Using the code editor, create a new file called `steamos-select-branch` in the `Developer` folder, add the following lines to the file and then save the file
 
-  > `~/Developer/steamos-select-branch`
-  >
-  > ---
-  >
-  > `#!/bin/bash`
-  >
-  > `echo "Not applicable for this OS"`
+  `~/Developer/steamos-select-branch`
+  
+  ---
+  ```bash
+  #!/bin/bash
+  
+  echo "Not applicable for this OS"
+  ```
 
 * Using the terminal, set the permissions to the scripts and copy them to the following
 
-  > `chmod +x ~/Developer/steamos-select-branch`
-  >
-  > `sudo cp ~/Developer/steamos-select-branch /usr/bin/`
+  ```bash
+  chmod +x ~/Developer/steamos-select-branch
+
+  sudo cp ~/Developer/steamos-select-branch /usr/bin/
+  ```
 
 ### 10. Create a helper script for 'Switch to Desktop' feature to work
 
@@ -419,23 +470,29 @@ To mimmic this on other Linux distributions, a dummy script will be created that
 
 * (If it does not exist already) create a `Developer` folder in your `HOME` location using a file manager or from the command line as follows
 
-  > `mkdir ~/Developer`
+  ```bash
+  mkdir ~/Developer
+  ```
 
 * Using the code editor, create a new file called `steamos-session-select` in the `Developer` folder, add the following lines to the file and then save the file
 
-  > `~/Developer/steamos-session-select`
-  >
-  > ---
-  >
-  > `#!/bin/bash`
-  >
-  > `steam -shutdown`
+  `~/Developer/steamos-session-select`
+  
+  ---
+  ```bash
+  #!/bin/bash
+  
+  steam -shutdown
+  ```
 
 * Using the terminal, set the permissions of the scripts with execute and copy them to the following
 
-  > `chmod +x ~/Developer/steamos-session-select`
-  >
-  > `sudo cp ~/Developer/steamos-session-select /usr/bin/`
+  ```bash
+  chmod +x ~/Developer/steamos-session-select
+  ```
+  ```bash
+  sudo cp ~/Developer/steamos-session-select /usr/bin/
+  ```
 
 ### 11. Run through Steam Deck set up
 
@@ -485,7 +542,9 @@ Now, a flag is used set when launching with `Gamescope` and is the preferred app
 
 It is also possible to use Gamescope with Steam on top of a regular desktop like KDE Plasma, Gnome, Cinnamon, etc. This makes it easier to test this concept by running a simple command from the terminal or command prompt.
 
-  > `gamescope --mangoapp -e -- steam -steamdeck`.
+  ```bash
+  gamescope --mangoapp -e -- steam -steamdeck
+  ```
 
 Note: This command also enable MangoApp as well as launching into Steam Deck mode.
 
@@ -507,11 +566,19 @@ This has to be used in conjunction with the `-steamdeck` flag for it to run.
 
 ### Add a script to launch Steam in Gamescope and SteamOS mode
 
-Steam supports a number of flags to tweak and optimise the experience when running Steam using Gamescope in an embedded session. These are often used for the Steam Deck for hardware compatibility (e.g. LCD and OLED screens, HDR, fan control, etc.)
+Steam supports a number of flags or options to tweak and optimise the experience when running Steam using Gamescope in an embedded session. These are often used for the Steam Deck for hardware compatibility (e.g. LCD and OLED screens, HDR, fan control, etc.)
 
 Although this isn't required for the purpose of this concept, having a script to launch Steam using Gamescope will make it easier adapt and make further tweaks.
 
-That said, such tweaks can affect compatibility when running games. Keeping things as simple as possible seems to be the most compatible way of launching games in SteamOS mode.
+That said, some tweaks can affect compatibility when running games. Keeping things as simple as possible seems to be the most compatible way of launching games in SteamOS mode.
+
+### Setting GAMESCOPE_MODE_SAVE_FILE
+
+One of the options to include in the script is setting the following prior to launching SteamOS mode will enable hidden options to appear, including the 'Automatically Set Resolution' option.
+
+  ```bash
+  export GAMESCOPE_MODE_SAVE_FILE="$HOME/.config/gamescope/modes.cfg"
+  ```
 
 ### Setting up a new session in the display manager
 
@@ -541,7 +608,9 @@ How this can be achieved? Thankfully, there is a simple command to tell Steam to
 * Launch Steam on your desktop session
 * Run the following command from a terminal:
 
-  > `steam -shutdown`
+  ```bash
+  steam -shutdown
+  ```
 
 This will close Steam gracefully.
 
