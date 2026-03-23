@@ -300,7 +300,7 @@ In this case, a dummy script will be created that will exit with code 0 back to 
   `~/Developer/steamos-polkit-helpers/steamos-set-timezone`
   
   ---
-  
+
   ```bash
   #!/bin/bash
   
@@ -336,6 +336,7 @@ In this case, a dummy script will be created that will echo 'no updates configur
   `~/Developer/jupier-biosupdate`
   
   ---
+
   ```bash
   #!/bin/bash
   
@@ -349,6 +350,7 @@ In this case, a dummy script will be created that will echo 'no updates configur
   `~/Developer/steamos-polkit-helpers/jupier-biosupdate`
   
   ---
+
   ```bash
   #!/bin/bash
   
@@ -392,6 +394,7 @@ In this case, a dummy script will be created that will exit with code 7 back to 
   `~/Developer/steamos-update`
   
   ---
+
   ```bash
   #!/bin/bash
   
@@ -403,6 +406,7 @@ In this case, a dummy script will be created that will exit with code 7 back to 
   `~/Developer/steamos-polkit-helpers/steamos-update`
   
   ---
+
   ```bash
   #!/bin/bash
   
@@ -414,7 +418,7 @@ In this case, a dummy script will be created that will exit with code 7 back to 
 * Uisng the terminal, set the permissions of the scripts with execute and copy them to the following
 
   ```bash
-  > `chmod +x ~/Developer/steamos-update`
+  chmod +x ~/Developer/steamos-update
   ```
   ```bash
   sudo cp ~/Developer/steamos-update /usr/bin/
@@ -446,6 +450,7 @@ In this case, a dummy script will be created that will echo 'Not applicable for 
   `~/Developer/steamos-select-branch`
   
   ---
+
   ```bash
   #!/bin/bash
   
@@ -479,6 +484,7 @@ To mimmic this on other Linux distributions, a dummy script will be created that
   `~/Developer/steamos-session-select`
   
   ---
+  
   ```bash
   #!/bin/bash
   
