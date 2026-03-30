@@ -1,0 +1,381 @@
+#!/bin/bash
+
+set -euo pipefail
+
+VERSION="1.0.0"
+SCRIPT_NAME="$(basename "$0")"
+
+show_help() {
+    cat << EOF
+Usage: $SCRIPT_NAME [enable|disable] [username] [options]
+
+Configure autologin for Steam gamescope session on various display managers.
+
+Commands:
+    enable USERNAME    Enable autologin for the specified user
+    disable           Disable autologin (username optional)
+    status            Show current autologin status
+    
+Options:
+    -d, --dm DM       Specify display manager (lightdm, sddm, gdm)
+                      If not specified, attempts auto-detection
+    -h, --help        Show this help message
+    -v, --version     Show version information
+    
+Examples:
+    $SCRIPT_NAME enable johndoe              # Enable autologin for user johndoe
+    $SCRIPT_NAME enable johndoe -d lightdm   # Enable for johndoe using LightDM
+    $SCRIPT_NAME disable                     # Disable autologin
+    $SCRIPT_NAME status                      # Check autologin status
+    
+Supported Display Managers:
+    - LightDM
+    - SDDM  
+    - GDM/GDM3
+EOF
+}
+
+show_version() {
+    echo "$SCRIPT_NAME version $VERSION"
+}
+
+check_root() {
+    if [ "$(id -u)" -ne 0 ]; then
+        echo "Error: This script must be run as root. Use 'sudo $SCRIPT_NAME'"
+        exit 1
+    fi
+}
+
+detect_display_manager() {
+    if systemctl is-active --quiet lightdm; then
+        echo "lightdm"
+    elif systemctl is-active --quiet sddm; then
+        echo "sddm"
+    elif systemctl is-active --quiet gdm || systemctl is-active --quiet gdm3; then
+        echo "gdm"
+    elif [ -f /etc/lightdm/lightdm.conf ] || [ -d /etc/lightdm ]; then
+        echo "lightdm"
+    elif [ -f /etc/sddm.conf ] || [ -d /etc/sddm.conf.d ]; then
+        echo "sddm"
+    elif [ -f /etc/gdm3/custom.conf ] || [ -f /etc/gdm/custom.conf ]; then
+        echo "gdm"
+    else
+        echo "unknown"
+    fi
+}
+
+backup_config() {
+    local config_file="$1"
+    if [ -f "$config_file" ]; then
+        local backup_file="${config_file}.backup.$(date +%Y%m%d_%H%M%S)"
+        cp "$config_file" "$backup_file"
+        echo "Backed up $config_file to $backup_file"
+    fi
+}
+
+enable_lightdm_autologin() {
+    local username="$1"
+    
+    echo "Configuring LightDM autologin for user: $username"
+    
+    if [ -f /etc/lightdm/lightdm.conf ]; then
+        backup_config /etc/lightdm/lightdm.conf
+    fi
+    
+    mkdir -p /etc/lightdm/lightdm.conf.d/
+    cat > /etc/lightdm/lightdm.conf.d/50-gamescope-autologin.conf <<EOF
+[Seat:*]
+autologin-user=$username
+autologin-session=steam
+autologin-user-timeout=0
+EOF
+    
+    if getent group autologin > /dev/null 2>&1; then
+        usermod -a -G autologin "$username" 2>/dev/null || true
+        echo "Added $username to autologin group"
+    fi
+    
+    echo "LightDM autologin enabled successfully!"
+}
+
+disable_lightdm_autologin() {
+    local username="${1:-}"
+    
+    echo "Disabling LightDM autologin..."
+    
+    if [ -f /etc/lightdm/lightdm.conf.d/50-gamescope-autologin.conf ]; then
+        rm /etc/lightdm/lightdm.conf.d/50-gamescope-autologin.conf
+        echo "Removed LightDM autologin configuration"
+    fi
+    
+    if [ -n "$username" ] && getent group autologin > /dev/null 2>&1; then
+        if ! find /etc/lightdm/lightdm.conf.d/ -name "*autologin*" 2>/dev/null | grep -q .; then
+            gpasswd -d "$username" autologin 2>/dev/null || true
+            echo "Removed $username from autologin group"
+        fi
+    fi
+    
+    echo "LightDM autologin disabled successfully!"
+}
+
+enable_sddm_autologin() {
+    local username="$1"
+    
+    echo "Configuring SDDM autologin for user: $username"
+    
+    mkdir -p /etc/sddm.conf.d/
+    cat > /etc/sddm.conf.d/autologin.conf <<EOF
+[Autologin]
+User=$username
+Session=steam
+Relogin=false
+
+[General]
+DisplayServer=wayland
+EOF
+    
+    echo "SDDM autologin enabled successfully!"
+}
+
+disable_sddm_autologin() {
+    echo "Disabling SDDM autologin..."
+    
+    if [ -f /etc/sddm.conf.d/autologin.conf ]; then
+        rm /etc/sddm.conf.d/autologin.conf
+        echo "Removed SDDM autologin configuration"
+    fi
+    
+    echo "SDDM autologin disabled successfully!"
+}
+
+enable_gdm_autologin() {
+    local username="$1"
+    local gdm_conf=""
+    
+    echo "Configuring GDM autologin for user: $username"
+    
+    if [ -f /etc/gdm3/custom.conf ]; then
+        gdm_conf="/etc/gdm3/custom.conf"
+    elif [ -f /etc/gdm/custom.conf ]; then
+        gdm_conf="/etc/gdm/custom.conf"
+    else
+        echo "Error: Could not find GDM configuration file"
+        return 1
+    fi
+    
+    backup_config "$gdm_conf"
+    
+    if grep -q "^\[daemon\]" "$gdm_conf"; then
+        sed -i '/^\[daemon\]/,/^\[/ {
+            s/^AutomaticLoginEnable=.*/AutomaticLoginEnable=true/
+            s/^AutomaticLogin=.*/AutomaticLogin='"$username"'/
+        }' "$gdm_conf"
+        
+        if ! grep -q "^AutomaticLoginEnable=" "$gdm_conf"; then
+            sed -i "/^\[daemon\]/a AutomaticLoginEnable=true" "$gdm_conf"
+        fi
+        if ! grep -q "^AutomaticLogin=" "$gdm_conf"; then
+            sed -i "/^\[daemon\]/a AutomaticLogin=$username" "$gdm_conf"
+        fi
+    else
+        {
+            echo ""
+            echo "[daemon]"
+            echo "AutomaticLoginEnable=true"
+            echo "AutomaticLogin=$username"
+        } >> "$gdm_conf"
+    fi
+    
+    echo "GDM autologin enabled successfully!"
+}
+
+disable_gdm_autologin() {
+    local gdm_conf=""
+    
+    echo "Disabling GDM autologin..."
+    
+    if [ -f /etc/gdm3/custom.conf ]; then
+        gdm_conf="/etc/gdm3/custom.conf"
+    elif [ -f /etc/gdm/custom.conf ]; then
+        gdm_conf="/etc/gdm/custom.conf"
+    else
+        echo "Warning: Could not find GDM configuration file"
+        return 0
+    fi
+    
+    if [ -f "$gdm_conf" ] && grep -q "^AutomaticLoginEnable=true" "$gdm_conf"; then
+        backup_config "$gdm_conf"
+        sed -i 's/^AutomaticLoginEnable=true/AutomaticLoginEnable=false/' "$gdm_conf"
+        sed -i 's/^AutomaticLogin=.*/AutomaticLogin=/' "$gdm_conf"
+        echo "Disabled GDM autologin"
+    fi
+    
+    echo "GDM autologin disabled successfully!"
+}
+
+check_lightdm_status() {
+    if [ -f /etc/lightdm/lightdm.conf.d/50-gamescope-autologin.conf ]; then
+        local user
+        user=$(grep "^autologin-user=" /etc/lightdm/lightdm.conf.d/50-gamescope-autologin.conf | cut -d= -f2)
+        echo "LightDM: Autologin enabled for user '$user'"
+    else
+        echo "LightDM: Autologin not configured"
+    fi
+}
+
+check_sddm_status() {
+    if [ -f /etc/sddm.conf.d/autologin.conf ]; then
+        local user
+        user=$(grep "^User=" /etc/sddm.conf.d/autologin.conf | cut -d= -f2)
+        echo "SDDM: Autologin enabled for user '$user'"
+    else
+        echo "SDDM: Autologin not configured"
+    fi
+}
+
+check_gdm_status() {
+    local gdm_conf=""
+    
+    if [ -f /etc/gdm3/custom.conf ]; then
+        gdm_conf="/etc/gdm3/custom.conf"
+    elif [ -f /etc/gdm/custom.conf ]; then
+        gdm_conf="/etc/gdm/custom.conf"
+    fi
+    
+    if [ -n "$gdm_conf" ] && [ -f "$gdm_conf" ]; then
+        if grep -q "^AutomaticLoginEnable=true" "$gdm_conf"; then
+            local user
+            user=$(grep "^AutomaticLogin=" "$gdm_conf" | cut -d= -f2)
+            echo "GDM: Autologin enabled for user '$user'"
+        else
+            echo "GDM: Autologin not configured"
+        fi
+    else
+        echo "GDM: Configuration file not found"
+    fi
+}
+
+check_status() {
+    echo "Checking autologin status..."
+    echo
+    check_lightdm_status
+    check_sddm_status
+    check_gdm_status
+}
+
+main() {
+    local command=""
+    local username=""
+    local display_manager=""
+    
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            enable|disable|status)
+                command="$1"
+                shift
+                if [[ "$command" == "enable" && $# -gt 0 && ! "$1" =~ ^- ]]; then
+                    username="$1"
+                    shift
+                elif [[ "$command" == "disable" && $# -gt 0 && ! "$1" =~ ^- ]]; then
+                    username="$1"
+                    shift
+                fi
+                ;;
+            -d|--dm)
+                if [[ $# -gt 1 ]]; then
+                    display_manager="${2,,}"
+                    shift 2
+                else
+                    echo "Error: --dm requires an argument"
+                    exit 1
+                fi
+                ;;
+            -h|--help)
+                show_help
+                exit 0
+                ;;
+            -v|--version)
+                show_version
+                exit 0
+                ;;
+            *)
+                echo "Error: Unknown option: $1"
+                echo "Use '$SCRIPT_NAME --help' for usage information"
+                exit 1
+                ;;
+        esac
+    done
+    
+    if [ -z "$command" ]; then
+        echo "Error: No command specified"
+        echo "Use '$SCRIPT_NAME --help' for usage information"
+        exit 1
+    fi
+    
+    if [ "$command" == "status" ]; then
+        check_status
+        exit 0
+    fi
+    
+    check_root
+    
+    if [ "$command" == "enable" ] && [ -z "$username" ]; then
+        echo "Error: Username is required for enable command"
+        echo "Usage: $SCRIPT_NAME enable USERNAME"
+        exit 1
+    fi
+    
+    if [ -n "$username" ] && ! id "$username" &>/dev/null; then
+        echo "Error: User '$username' does not exist"
+        exit 1
+    fi
+    
+    if [ -z "$display_manager" ]; then
+        display_manager=$(detect_display_manager)
+        if [ "$display_manager" == "unknown" ]; then
+            echo "Error: Could not detect display manager"
+            echo "Please specify using -d option (lightdm, sddm, or gdm)"
+            exit 1
+        fi
+        echo "Detected display manager: $display_manager"
+    fi
+    
+    case "$command" in
+        enable)
+            case "$display_manager" in
+                lightdm)
+                    enable_lightdm_autologin "$username"
+                    ;;
+                sddm)
+                    enable_sddm_autologin "$username"
+                    ;;
+                gdm|gdm3)
+                    enable_gdm_autologin "$username"
+                    ;;
+                *)
+                    echo "Error: Unsupported display manager: $display_manager"
+                    exit 1
+                    ;;
+            esac
+            ;;
+        disable)
+            case "$display_manager" in
+                lightdm)
+                    disable_lightdm_autologin "$username"
+                    ;;
+                sddm)
+                    disable_sddm_autologin
+                    ;;
+                gdm|gdm3)
+                    disable_gdm_autologin
+                    ;;
+                *)
+                    echo "Error: Unsupported display manager: $display_manager"
+                    exit 1
+                    ;;
+            esac
+            ;;
+    esac
+}
+
+main "$@"
